@@ -1,0 +1,86 @@
+<div class="row" *ngIf="loading">
+    <div class="col-12">
+        <mat-card >
+        <mat-card-content>
+            <mat-card-title>Cargando...</mat-card-title>
+            <mat-card-subtitle>
+                Obteniendo Listado de {{encabezado.title}}
+            </mat-card-subtitle>
+            <mat-progress-bar mode="indeterminate" value="40"></mat-progress-bar>
+        </mat-card-content>
+        </mat-card>
+    </div>
+</div>
+
+<mat-card *ngIf="!loading">
+    <div class="p-20 bg-info position-relative" style="margin-bottom: 20px;">
+        <!-- <button routerLink="form/0" mat-mini-fab color="accent" class="add-data">+</button> -->
+        <button (click)="abrirDialog()" mat-mini-fab color="accent" class="add-data">+</button>
+        <h4 class="card-title text-white m-0">{{encabezado.title}}</h4>
+        <h6 class="card-subtitle text-white m-0 op-5">{{encabezado.subtitle}}</h6>
+    </div>
+    <div class="message-box contact-box p-20">
+        <div class="example-action-buttons">
+            <button mat-button (click)="accordion.openAll()">Expand All</button>
+            <button mat-button (click)="accordion.closeAll()">Collapse All</button>
+          </div>
+          <mat-accordion class="example-headers-align" multi>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Personal data
+                </mat-panel-title>
+                <mat-panel-description>
+                  Type your name and age
+                  <mat-icon>account_circle</mat-icon>
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+          
+              <mat-form-field>
+                <mat-label>First name</mat-label>
+                <input matInput>
+              </mat-form-field>
+          
+              <mat-form-field>
+                <mat-label>Age</mat-label>
+                <input matInput type="number" min="1">
+              </mat-form-field>
+          
+            </mat-expansion-panel>
+            <mat-expansion-panel disabled>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Destination
+                </mat-panel-title>
+                <mat-panel-description>
+                  Type the country name
+                  <mat-icon>map</mat-icon>
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+          
+              <mat-form-field>
+                <mat-label>Country</mat-label>
+                <input matInput>
+              </mat-form-field>
+            </mat-expansion-panel>
+          
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Day of the trip
+                </mat-panel-title>
+                <mat-panel-description>
+                  Inform the date you wish to travel
+                  <mat-icon>date_range</mat-icon>
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+          
+              <mat-form-field>
+                <mat-label>Date</mat-label>
+                <input matInput [matDatepicker]="picker" (focus)="picker.open()" readonly>
+              </mat-form-field>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-expansion-panel>
+          </mat-accordion>
+    </div>
+</mat-card>

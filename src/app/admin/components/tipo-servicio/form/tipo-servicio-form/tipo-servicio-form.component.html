@@ -1,0 +1,129 @@
+<div class="row" *ngIf="loading">
+    <div class="col-12">
+        <mat-card >
+        <mat-card-content>
+            <mat-card-title>Procesando...</mat-card-title>
+            <mat-card-subtitle>
+                <span *ngIf="action=='editar'">
+                    La información de {{encabezado.title}} se esta almacenando...
+                </span>
+            </mat-card-subtitle>
+            <mat-progress-bar mode="indeterminate" value="40"></mat-progress-bar>
+        </mat-card-content>
+        </mat-card>
+    </div>
+</div>
+
+<form *ngIf="!loading" [formGroup]="myForm" (ngSubmit)="onSubmit(myForm)">
+    <mat-card>
+        <div class="p-20 bg-info position-relative" style="margin-bottom: 20px;">
+            <h4 class="card-title text-white m-0">{{encabezado.title}}</h4>
+            <h6 class="card-subtitle text-white m-0 op-5">{{encabezado.subtitle}}</h6>
+        </div>
+        <mat-card-content>
+            <mat-accordion class="example-headers-align">
+                <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle="true">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title> Información General </mat-panel-title>
+                        <mat-panel-description> Datos básicos
+                            <mat-icon>app_registration</mat-icon>
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <mat-form-field class="p-20">
+                        <mat-label>Nombre: </mat-label>
+                        <input matInput placeholder="Digite Nombre del tipo de habitacion" formControlName="nombre">
+                        <mat-icon matSuffix>mode_edit</mat-icon>
+                        <mat-error *ngIf="myForm?.get('nombre')?.hasError('required') && (myForm?.get('nombre')?.dirty || myForm?.get('nombre')?.touched)">
+                            Por favor, digite un nombre.
+                        </mat-error>
+                        <mat-error *ngIf="myForm?.get('nombre')?.hasError('minlength') && (myForm?.get('nombre')?.dirty || myForm?.get('nombre')?.touched)">
+                            El Nombre debe tener minimo 2 caracteres.
+                        </mat-error>
+                    </mat-form-field>
+                    
+
+                    <div fxLayout="row" fxLayoutAlign="space-between">
+                        <div fxFlex="33%" style="padding: 20px;">
+                            <mat-form-field class="full-width">
+                                <mat-label># personas</mat-label>
+                                <input matInput type="number" placeholder="Numero de personas" formControlName="numeroPersonas">
+                                <mat-error *ngIf="myForm?.get('numeroPersonas')?.hasError('required') && (myForm?.get('numeroPersonas')?.dirty || myForm?.get('numeroPersonas')?.touched)">
+                                    Por favor, digite un numero de personas.
+                                </mat-error>
+                                <mat-error *ngIf="myForm?.get('numeroPersonas')?.hasError('min') && (myForm?.get('numeroPersonas')?.dirty || myForm?.get('numeroPersonas')?.touched)">
+                                    El Numero de personas debe ser minimo 1.
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div fxFlex="33%" style="padding: 20px;">
+                            <mat-form-field class="full-width">
+                                <mat-label>Max. Personas</mat-label>
+                                <input matInput type="number" placeholder="Numero maximo de personas permitido" formControlName="maximoPersonas">
+                                <mat-error *ngIf="myForm?.get('maximoPersonas')?.hasError('required') && (myForm?.get('maximoPersonas')?.dirty || myForm?.get('maximoPersonas')?.touched)">
+                                    Por favor, digite un numero maximo de personas permitidas en el tipo de habitacion.
+                                </mat-error>
+                                <mat-error *ngIf="myForm?.get('maximoPersonas')?.hasError('min') && (myForm?.get('maximoPersonas')?.dirty || myForm?.get('maximoPersonas')?.touched)">
+                                    El Numero maximo de personas debe ser minimo 1.
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div fxFlex="33%" style="padding: 20px;">
+                            <mat-form-field class="full-width">
+                                <mat-label># Camas</mat-label>
+                                <input matInput type="number" placeholder="Numero de camas en el tipo de habitacion" formControlName="numeroCamas">
+                                <mat-error *ngIf="myForm?.get('numeroCamas')?.hasError('required') && (myForm?.get('numeroCamas')?.dirty || myForm?.get('numeroCamas')?.touched)">
+                                    Por favor, digite un numero de camas.
+                                </mat-error>
+                                <mat-error *ngIf="myForm?.get('numeroCamas')?.hasError('min') && (myForm?.get('numeroCamas')?.dirty || myForm?.get('numeroCamas')?.touched)">
+                                    El Numero de camas debe ser minimo 1.
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+
+                    <mat-form-field class="p-20">
+                        <mat-label>Descripción: </mat-label>
+                        <input matInput placeholder="Digite una breve Descripción del tipo de habitacion" formControlName="descripcion">
+                        <mat-icon matSuffix>mode_edit</mat-icon>
+                        <mat-error *ngIf="myForm?.get('descripcion')?.hasError('required') && (myForm?.get('descripcion')?.dirty || myForm?.get('descripcion')?.touched)">
+                            Por favor, digite una breve descripcion.
+                        </mat-error>
+                    </mat-form-field>
+                    
+
+                    <mat-action-row>
+                        <button mat-raised-button color="primary" (click)="nextStep()">Siguiente</button>
+                    </mat-action-row>
+                </mat-expansion-panel>
+                
+                <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" hideToggle="true">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title> Imagen </mat-panel-title>
+                        <mat-panel-description> Cargar imagen del tipo de habitacion
+                            <mat-icon>add_photo_alternate</mat-icon>
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <mat-form-field>
+                        <input matInput placeholder="Date" [matDatepicker]="picker" (focus)="picker.open()" readonly> </mat-form-field>
+                    <mat-datepicker #picker></mat-datepicker>
+                    <mat-action-row>
+                        <button mat-raised-button color="warn" (click)="prevStep()">Anterior</button>
+                        <button mat-raised-button color="primary" (click)="nextStep()">Finalizar</button>
+                    </mat-action-row>
+                </mat-expansion-panel>
+
+            </mat-accordion>
+        </mat-card-content>
+        <mat-card-actions align="end">
+            <button mat-raised-button color="warn" class="m-20" (click)="goBack()">Cancelar</button>
+            <button mat-raised-button color="primary" class="m-20" type="submit" [disabled]="myForm.invalid">Guardar</button>
+        </mat-card-actions>
+    </mat-card>
+    <div>
+        <ngx-colors ngx-colors-trigger style="display: inline-block; margin:5px;" formControlName="tipo"></ngx-colors>
+        Color: {{ myForm.controls['tipo'].value }}
+    </div>
+
+</form>
+
