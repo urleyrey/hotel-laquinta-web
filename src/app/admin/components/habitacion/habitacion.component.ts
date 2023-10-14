@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -7,13 +7,17 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { HabitacionService } from 'src/app/core/services/api/habitacion.service';
 import { UtilService } from 'src/app/core/services/util.service';
 import Swal from 'sweetalert2';
+import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { selectHabitacionCargado, selectHabitacionList, selectHabitacionLoading } from 'src/app/state/selectors/habitacion.selectors';
+import { loadHabitacion, loadedHabitacion } from 'src/app/state/actions/habitacion.actions';
 
 @Component({
   selector: 'app-habitacion',
   templateUrl: './habitacion.component.html',
   styleUrls: ['./habitacion.component.scss']
 })
-export class HabitacionComponent {
+export class HabitacionComponent implements OnInit{
   loading:boolean = true;
   listado:any = [];
   encabezado = {
@@ -25,19 +29,60 @@ export class HabitacionComponent {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  loading$: Observable<boolean> = new Observable();
+  cargado$: Observable<boolean> = new Observable();
 
-  constructor(private habitacionService: HabitacionService, private utilService: UtilService) {
-    this.cargarListado();
-    this.loading=true;
+  constructor(private habitacionService: HabitacionService, 
+              private utilService: UtilService,
+              private store: Store<any>) {
+    // this.cargarListado();
+    // this.loading=true;
   }
 
-  async cargarListado(){
+  ngOnInit(): void{
+    this.loading$ = this.store.select(selectHabitacionLoading);
+    this.store.dispatch(loadHabitacion());
+    this.cargado$ = this.store.select(selectHabitacionCargado);
+    this.cargado$.subscribe(value => {
+      if(!value){
+        this.cargarListadoApi();
+      }else{
+        this.cargarListadoStore();
+      }
+    })
+    
+  }
+
+  async cargarListadoApi(){
     await this.habitacionService.getAll().subscribe((res:any) => {
-      this.listado = JSON.parse(res.body).habitaciones;
+      console.log(res);
+      this.listado = JSON.parse(res.body).listado; //---> AJUSTAR LAMBDAS PARA Q ENVIE LISTADO
+      console.log(this.listado);
+      this.store.dispatch(
+        loadedHabitacion(
+          {habitaciones: this.listado}
+        )
+      );
       this.dataSource = new MatTableDataSource(this.listado);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
-      this.loading=false;
+      // this.loading=false;
+    });
+  }
+
+  async cargarListadoStore(){
+    await this.store.select(selectHabitacionList).subscribe(res => {
+      console.log(res);
+      this.listado = res;
+      this.store.dispatch(
+        loadedHabitacion(
+          {habitaciones: this.listado}
+        )
+      );
+      this.dataSource = new MatTableDataSource(this.listado);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+      // this.loading=false;
     });
   }
 
