@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -7,6 +7,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { UtilService } from 'src/app/core/services/util.service';
 import Swal from 'sweetalert2';
 import { EstadoHabitacionService } from 'src/app/core/services/api/estado-habitacion.service';
+import { Store } from '@ngrx/store';
+import { loadEstadohabitacion, loadedEstadohabitacion } from 'src/app/state/actions/estadohabitacion.actions';
+import { selectEstadohabitacionCargado, selectEstadohabitacionList, selectEstadohabitacionLoading } from 'src/app/state/selectors/estadohabitacion.selectors';
+import { Observable } from 'rxjs';
 
 
 @Component({
@@ -14,7 +18,7 @@ import { EstadoHabitacionService } from 'src/app/core/services/api/estado-habita
   templateUrl: './estado-habitacion.component.html',
   styleUrls: ['./estado-habitacion.component.scss']
 })
-export class EstadoHabitacionComponent {
+export class EstadoHabitacionComponent implements OnInit {
   loading:boolean = true;
   listado:any = [];
   encabezado = {
@@ -26,20 +30,60 @@ export class EstadoHabitacionComponent {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  loading$: Observable<boolean> = new Observable();
+  cargado$: Observable<boolean> = new Observable();
 
-  constructor(private estadoHabitacionService: EstadoHabitacionService, private utilService: UtilService) {
-    this.cargarListado();
-    this.loading=true;
+  constructor(private estadoHabitacionService: EstadoHabitacionService, 
+              private utilService: UtilService, 
+              private store: Store<any>) {
+    //this.cargarListado();
+    //this.loading=true;
+    
   }
 
-  async cargarListado(){
+  ngOnInit(): void{
+    this.loading$ = this.store.select(selectEstadohabitacionLoading);
+    this.store.dispatch(loadEstadohabitacion());
+    this.cargado$ = this.store.select(selectEstadohabitacionCargado);
+    this.cargado$.subscribe(value => {
+      if(!value){
+        this.cargarListadoApi();
+      }else{
+        this.cargarListadoStore();
+      }
+    })
+    
+  }
+
+  async cargarListadoApi(){
     await this.estadoHabitacionService.getAll().subscribe((res:any) => {
       console.log(res);
       this.listado = JSON.parse(res.body).listado;
+      this.store.dispatch(
+        loadedEstadohabitacion(
+          {estadoHabitaciones: this.listado}
+        )
+      );
       this.dataSource = new MatTableDataSource(this.listado);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
-      this.loading=false;
+      // this.loading=false;
+    });
+  }
+
+  async cargarListadoStore(){
+    await this.store.select(selectEstadohabitacionList).subscribe(res => {
+      console.log(res);
+      this.listado = res;
+      this.store.dispatch(
+        loadedEstadohabitacion(
+          {estadoHabitaciones: this.listado}
+        )
+      );
+      this.dataSource = new MatTableDataSource(this.listado);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+      // this.loading=false;
     });
   }
 

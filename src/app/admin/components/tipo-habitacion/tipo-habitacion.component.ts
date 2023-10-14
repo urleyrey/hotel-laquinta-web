@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -7,6 +7,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { HabitacionService } from 'src/app/core/services/api/habitacion.service';
 import { UtilService } from 'src/app/core/services/util.service';
 import Swal from 'sweetalert2';
+import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { TipoHabitacionService } from 'src/app/core/services/api/tipo-habitacion.service';
+import { selectTipohabitacionCargado, selectTipohabitacionList, selectTipohabitacionLoading } from 'src/app/state/selectors/tipohabitacion.selectors';
+import { loadTipohabitacion, loadedTipohabitacion } from 'src/app/state/actions/tipohabitacion.actions';
 
 
 @Component({
@@ -14,7 +19,7 @@ import Swal from 'sweetalert2';
   templateUrl: './tipo-habitacion.component.html',
   styleUrls: ['./tipo-habitacion.component.scss']
 })
-export class TipoHabitacionComponent{
+export class TipoHabitacionComponent implements OnInit{
   loading:boolean = true;
   listado:any = [];
   encabezado = {
@@ -26,19 +31,59 @@ export class TipoHabitacionComponent{
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  loading$: Observable<boolean> = new Observable();
+  cargado$: Observable<boolean> = new Observable();
 
-  constructor(private habitacionService: HabitacionService, private utilService: UtilService) {
-    this.cargarListado();
-    this.loading=true;
+  constructor(private tipoHabitacionService: TipoHabitacionService, 
+              private utilService: UtilService,
+              private store: Store<any>) {
+    // this.cargarListado();
+    // this.loading=true;
   }
 
-  async cargarListado(){
-    await this.habitacionService.getAll().subscribe((res:any) => {
-      this.listado = JSON.parse(res.body).habitaciones;
+  ngOnInit(): void{
+    this.loading$ = this.store.select(selectTipohabitacionLoading);
+    this.store.dispatch(loadTipohabitacion());
+    this.cargado$ = this.store.select(selectTipohabitacionCargado);
+    this.cargado$.subscribe(value => {
+      if(!value){
+        this.cargarListadoApi();
+      }else{
+        this.cargarListadoStore();
+      }
+    })
+    
+  }
+
+  async cargarListadoApi(){
+    await this.tipoHabitacionService.getAll().subscribe((res:any) => {
+      console.log(res);
+      this.listado = JSON.parse(res.body).listado;
+      this.store.dispatch(
+        loadedTipohabitacion(
+          {tipoHabitaciones: this.listado}
+        )
+      );
       this.dataSource = new MatTableDataSource(this.listado);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
-      this.loading=false;
+      // this.loading=false;
+    });
+  }
+
+  async cargarListadoStore(){
+    await this.store.select(selectTipohabitacionList).subscribe(res => {
+      console.log(res);
+      this.listado = res;
+      this.store.dispatch(
+        loadedTipohabitacion(
+          {tipoHabitaciones: this.listado}
+        )
+      );
+      this.dataSource = new MatTableDataSource(this.listado);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+      // this.loading=false;
     });
   }
 
@@ -63,7 +108,7 @@ export class TipoHabitacionComponent{
       cancelButtonText: 'Cancelar!'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.habitacionService.delete(id).subscribe((res) => {
+        this.tipoHabitacionService.delete(id).subscribe((res) => {
           Swal.fire(
             'Eliminado!',
             'El registro ha sido borrado.',

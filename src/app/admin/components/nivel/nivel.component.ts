@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { NivelService } from 'src/app/core/services/api/nivel.service';
@@ -7,6 +7,10 @@ import Swal from 'sweetalert2';
 import { MatAccordion } from '@angular/material/expansion';
 import { MatDialog } from '@angular/material/dialog';
 import { NivelFormComponent } from './form/nivel-form/nivel-form.component';
+import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { selectNivelCargado, selectNivelList, selectNivelLoading } from 'src/app/state/selectors/nivel.selectors';
+import { loadNivel, loadedNivel } from 'src/app/state/actions/nivel.actions';
 
 
 @Component({
@@ -14,7 +18,7 @@ import { NivelFormComponent } from './form/nivel-form/nivel-form.component';
   templateUrl: './nivel.component.html',
   styleUrls: ['./nivel.component.scss']
 })
-export class NivelComponent {
+export class NivelComponent implements OnInit{
   @ViewChild(MatAccordion) accordion!: MatAccordion;
   loading:boolean = false;
   listado:any = [];
@@ -22,15 +26,50 @@ export class NivelComponent {
     "title": 'Niveles',
     "subtitle": 'Listado de Niveles(Pisos) regitrados'
   }
+  
+  loading$: Observable<boolean> = new Observable();
+  cargado$: Observable<boolean> = new Observable();
 
-  constructor(private nivelService: NivelService, private utilService: UtilService, public dialog: MatDialog) {
+  constructor(private nivelService: NivelService, 
+              private utilService: UtilService, 
+              public dialog: MatDialog,
+              private store: Store<any>) {
     //this.cargarListado();
   }
 
-  async cargarListado(){
-    this.loading=true;
+  ngOnInit(): void{
+    this.loading$ = this.store.select(selectNivelLoading);
+    this.store.dispatch(loadNivel());
+    this.cargado$ = this.store.select(selectNivelCargado);
+    this.cargado$.subscribe(value => {
+      if(!value){
+        this.cargarListadoApi();
+      }else{
+        this.cargarListadoStore();
+      }
+    })
+  }
+
+  async cargarListadoApi(){
     await this.nivelService.getAll().subscribe((res:any) => {
-      this.listado = JSON.parse(res.body).habitaciones;
+      this.listado = JSON.parse(res.body).listado;
+      this.store.dispatch(
+        loadedNivel(
+          {niveles: this.listado}
+        )
+      );
+    });
+  }
+
+  async cargarListadoStore(){
+    await this.store.select(selectNivelList).subscribe(res => {
+      console.log(res);
+      this.listado = res;
+      this.store.dispatch(
+        loadedNivel(
+          {niveles: this.listado}
+        )
+      );
     });
   }
 

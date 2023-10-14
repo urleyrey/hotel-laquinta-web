@@ -1,4 +1,4 @@
-<div class="row" *ngIf="loading">
+<div class="row" *ngIf="loading$ | async">
     <div class="col-12">
         <mat-card >
         <mat-card-content>
@@ -11,8 +11,8 @@
         </mat-card>
     </div>
 </div>
-
-<mat-card *ngIf="!loading">
+<span>{{(loading$ | async)}}</span>
+<mat-card *ngIf="!(loading$ | async)">
     <div class="p-20 bg-info position-relative" style="margin-bottom: 20px;">
         <button routerLink="form/0" mat-mini-fab color="accent" class="add-data">+</button>
         <h4 class="card-title text-white m-0">{{encabezado.title}}</h4>
