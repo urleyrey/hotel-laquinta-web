@@ -23,10 +23,10 @@ export class TipoServicioComponent implements OnInit {
   loading:boolean = true;
   listado:any = [];
   encabezado = {
-    "title": 'Tipo de Habitacion',
-    "subtitle": 'Listado de tipos de habitaciones regitrados'
+    "title": 'Tipo de Servicio',
+    "subtitle": 'Listado de tipos de servicio regitrados'
   }
-  displayedColumns: string[] = ['id', 'nombre', 'numeroPersonas', 'maximoPersonas', 'numeroCamas', 'descripcion', 'accion'];
+  displayedColumns: string[] = ['id', 'nombre', 'descripcion', 'color', 'accion'];
   dataSource!: MatTableDataSource<any>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -56,7 +56,7 @@ export class TipoServicioComponent implements OnInit {
 
   async cargarListadoApi(){
     await this.tipoServicioService.getAll().subscribe((res:any) => {
-      console.log(res);
+      console.log("API: ", res);
       this.listado = JSON.parse(res.body).listado;
       this.store.dispatch(
         loadedTiposervicio(
