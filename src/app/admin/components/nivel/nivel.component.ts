@@ -11,6 +11,7 @@ import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { selectNivelCargado, selectNivelList, selectNivelLoading } from 'src/app/state/selectors/nivel.selectors';
 import { loadNivel, loadedNivel } from 'src/app/state/actions/nivel.actions';
+import { KeyValue } from '@angular/common';
 
 
 @Component({
@@ -110,4 +111,19 @@ export class NivelComponent implements OnInit{
       }
     })
   }
+
+  indexOrderAsc = (akv: KeyValue<string, any>, bkv: KeyValue<string, any>): number => {
+    const a = akv.value.id;
+    const b = bkv.value.id;
+
+    return a > b ? 1 : (b > a ? -1 : 0);
+  };
+
+  indexOrderDesc = (akv: KeyValue<string, any>, bkv: KeyValue<string, any>): number => {
+    const a = akv.value.id;
+    const b = bkv.value.id;
+
+    return a < b ? 1 : (b < a ? -1 : 0);
+  };
+
 }

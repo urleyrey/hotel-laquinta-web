@@ -26,71 +26,36 @@
           </div>
           <mat-accordion class="example-headers-align" multi>
             
-            <mat-expansion-panel *ngFor="let item of listado">
+            <mat-expansion-panel *ngFor="let item of listado | keyvalue:indexOrderDesc">
               <mat-expansion-panel-header>
                 <mat-panel-title>
-                  Personal data
+                  {{item.value.descripcion}}
                 </mat-panel-title>
                 <mat-panel-description>
-                  Type your name and age
-                  <mat-icon>account_circle</mat-icon>
+                  Nivel {{item.value.posicion}}
+                  <div matBadge="{{item.value.posicion}}" matBadgeSize="medium" class="demo-section"></div>
                 </mat-panel-description>
               </mat-expansion-panel-header>
               
-              {{item.descripcion}}
+              {{item | json}}
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="card">
+                      <div class="card-header card-header-icon card-header-rose">
+                        <div class="card-icon">
+                          <i class="material-icons"></i>
+                        </div>
+                        <h4 class="card-title">Here is the Icon</h4>
+                      </div>
+                      <div class="card-body">
+                          The place is close to Barceloneta Beach and bus stop just 2 min by walk and near to "Naviglio" where you can enjoy the main night life in Barcelona...
+                      </div>
+                  </div>
+                </div>
+              </div>
           
             </mat-expansion-panel>  
 
-
-            <mat-expansion-panel>
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  Personal data
-                </mat-panel-title>
-                <mat-panel-description>
-                  Type your name and age
-                  <mat-icon>account_circle</mat-icon>
-                </mat-panel-description>
-              </mat-expansion-panel-header>
-              
-              Contenido
-          
-            </mat-expansion-panel>
-
-            <mat-expansion-panel disabled>
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  Destination
-                </mat-panel-title>
-                <mat-panel-description>
-                  Type the country name
-                  <mat-icon>map</mat-icon>
-                </mat-panel-description>
-              </mat-expansion-panel-header>
-          
-              <mat-form-field>
-                <mat-label>Country</mat-label>
-                <input matInput>
-              </mat-form-field>
-            </mat-expansion-panel>
-          
-            <mat-expansion-panel>
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  Day of the trip
-                </mat-panel-title>
-                <mat-panel-description>
-                  Inform the date you wish to travel
-                  <mat-icon>date_range</mat-icon>
-                </mat-panel-description>
-              </mat-expansion-panel-header>
-          
-              <mat-form-field>
-                <mat-label>Date</mat-label>
-                <input matInput [matDatepicker]="picker" (focus)="picker.open()" readonly>
-              </mat-form-field>
-              <mat-datepicker #picker></mat-datepicker>
-            </mat-expansion-panel>
           </mat-accordion>
     </div>
 </mat-card>
