@@ -29,4 +29,18 @@ export class UtilService {
         this.router.navigate([currentUrl]);
     });
   }
+
+  getObjeto(id:string, listado:any){
+    return listado.find((v:any)=>{
+      return v.id == id;
+    });
+  }
+
+  getObjetos(ids:string[], listado:any){
+    ids.forEach((id, index) => {
+      let srv = this.getObjeto(id, listado);
+      ids[index] = srv;
+    })
+    return ids;
+  }
 }

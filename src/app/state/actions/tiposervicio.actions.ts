@@ -9,3 +9,12 @@ export const loadedTiposervicio = createAction(
     '[Tipo Servicio] Loaded List Success',
     props<{tipoServicios: Tiposervicio[]}>()
 );
+
+export const changeTiposervicio = createAction(
+    '[Tipo Servicio] change List Success',
+    props<{cargado: boolean}>()
+);
+
+export const loadedTiposervicioStore = createAction(
+    '[Tipo Servicio] Loaded List Store Success'
+);

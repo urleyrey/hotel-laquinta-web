@@ -43,7 +43,7 @@
                     
 
                     <div fxLayout="row" fxLayoutAlign="space-between">
-                        <div fxFlex="33%" style="padding: 20px;">
+                        <div fxFlex="50%" style="padding: 20px;">
                             <mat-form-field class="full-width">
                                 <mat-label># personas</mat-label>
                                 <input matInput type="number" placeholder="Numero de personas" formControlName="numeroPersonas">
@@ -55,7 +55,7 @@
                                 </mat-error>
                             </mat-form-field>
                         </div>
-                        <div fxFlex="33%" style="padding: 20px;">
+                        <div fxFlex="50%" style="padding: 20px;">
                             <mat-form-field class="full-width">
                                 <mat-label>Max. Personas</mat-label>
                                 <input matInput type="number" placeholder="Numero maximo de personas permitido" formControlName="maximoPersonas">
@@ -67,7 +67,10 @@
                                 </mat-error>
                             </mat-form-field>
                         </div>
-                        <div fxFlex="33%" style="padding: 20px;">
+                    </div>
+
+                    <div fxLayout="row" fxLayoutAlign="space-between">
+                        <div fxFlex="50%" style="padding: 20px;">
                             <mat-form-field class="full-width">
                                 <mat-label># Camas</mat-label>
                                 <input matInput type="number" placeholder="Numero de camas en el tipo de habitacion" formControlName="numeroCamas">
@@ -79,6 +82,15 @@
                                 </mat-error>
                             </mat-form-field>
                         </div>
+
+                        <div fxFlex="50%" style="padding: 30px;">
+                            <div fxLayout="row" fxLayoutAlign="center center">
+                                <strong>Color: &nbsp;&nbsp;&nbsp;</strong>   
+                                <ngx-colors ngx-colors-trigger style="display: inline-block; margin:5px;" formControlName="color"></ngx-colors>
+                                <span>{{ myForm.controls['color'].value }}</span>
+                            </div>
+                        </div>
+
                     </div>
 
 

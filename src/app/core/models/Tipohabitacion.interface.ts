@@ -5,4 +5,5 @@ export interface Tipohabitacion {
     maximoPersonas: string;
     numeroCamas:    string;
     descripcion:    string;
+    color:          string;
 }

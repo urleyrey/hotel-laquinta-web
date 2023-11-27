@@ -9,3 +9,12 @@ export const loadedCaja = createAction(
     '[Caja] Loaded List Success',
     props<{cajas: Caja[]}>()
 );
+
+export const changeCaja = createAction(
+    '[Caja] change List Success',
+    props<{cargado: boolean}>()
+);
+
+export const loadedCajaStore = createAction(
+    '[Caja] Loaded List Store Success'
+);

@@ -2,8 +2,10 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { EstadoHabitacionService } from 'src/app/core/services/api/estado-habitacion.service';
 import { UtilService } from 'src/app/core/services/util.service';
+import { changeEstadohabitacion } from 'src/app/state/actions/estadohabitacion.actions';
 
 @Component({
   selector: 'app-estado-habitacion-form',
@@ -28,7 +30,8 @@ export class EstadoHabitacionFormComponent {
   
   constructor(private router: Router,  route: ActivatedRoute,
     private estadoHabitacionService: EstadoHabitacionService, 
-    private fb: FormBuilder, private utilService: UtilService){
+    private fb: FormBuilder, private utilService: UtilService,
+    private store: Store<any>){
       this.myForm = fb.group({
         nombre: ['', [Validators.required ,Validators.minLength(2)]],
         descripcion: ['', [Validators.required]],
@@ -58,6 +61,9 @@ export class EstadoHabitacionFormComponent {
     else{
       this.estadoHabitacionService.post(form.value).subscribe((res) => {
         this.utilService.openSwalBasic("Atencion","Información Registrada Correctamente", "success").then(() => {
+          this.store.dispatch(changeEstadohabitacion(
+            {cargado: false}
+          ));
           this.router.navigate(['/admin','estado-habitacion']);
         });
       });
@@ -85,6 +91,9 @@ export class EstadoHabitacionFormComponent {
     this.estadoHabitacionService.put(this.id, this.updateExpression.substring(0, this.updateExpression.length - 1), this.updateValues)
     .subscribe((res) => {
       this.utilService.openSwalBasic('Atención',`Campos ${this.camposEditados} Editados Correctamente`, "success").then(() => {
+        this.store.dispatch(changeEstadohabitacion(
+          {cargado: false}
+        ));
         this.router.navigate(['/admin','estado-habitacion']);
       });
     });

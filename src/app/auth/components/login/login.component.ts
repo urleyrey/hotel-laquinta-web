@@ -12,7 +12,7 @@ export class LoginComponent {
   user: IUser;
 
   constructor(private router: Router, private cognitoService: CognitoService) {
-    this.user = {} as IUser;
+    this.user = {email:'urleyrey1987@mailinator.com', password:'Urley1987.'} as IUser;
   }
 
   public login():void {

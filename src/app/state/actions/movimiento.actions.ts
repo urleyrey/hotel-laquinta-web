@@ -9,3 +9,12 @@ export const loadedMovimiento = createAction(
     '[Movimiento] Loaded List Success',
     props<{movimientos: Movimiento[]}>()
 );
+
+export const changeMovimiento = createAction(
+    '[Movimiento] change List Success',
+    props<{cargado: boolean}>()
+);
+
+export const loadedMovimientoStore = createAction(
+    '[Movimiento] Loaded List Store Success'
+);

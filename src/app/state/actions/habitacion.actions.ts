@@ -9,3 +9,12 @@ export const loadedHabitacion = createAction(
     '[Habitacion] Loaded List Success',
     props<{habitaciones: Habitacion[]}>()
 );
+
+export const changeHabitacion = createAction(
+    '[Habitacion] change List Success',
+    props<{cargado: boolean}>()
+);
+
+export const loadedHabitacionStore = createAction(
+    '[Habitacion] Loaded List Store Success'
+);

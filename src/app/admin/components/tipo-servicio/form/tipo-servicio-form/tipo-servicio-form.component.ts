@@ -2,8 +2,10 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { ActivatedRoute, Router } from '@angular/router';
-import { HabitacionService } from 'src/app/core/services/api/habitacion.service';
+import { Store } from '@ngrx/store';
+import { TipoServicioService } from 'src/app/core/services/api/tipo-servicio.service';
 import { UtilService } from 'src/app/core/services/util.service';
+import { changeTiposervicio } from 'src/app/state/actions/tiposervicio.actions';
 
 @Component({
   selector: 'app-tipo-servicio-form',
@@ -21,33 +23,29 @@ export class TipoServicioFormComponent {
   duration: number = 0;
   durationLimit=1000;
   encabezado = {
-    "title": 'Tipo de Habitacion',
-    "subtitle": 'Listado de tipos de habitaciones regitrados'
+    "title": 'Tipo de Servicio',
+    "subtitle": 'Listado de tipos de servicio regitrados'
   }
   myForm!: FormGroup;
   
   constructor(private router: Router,  route: ActivatedRoute,
-    private habitacionService: HabitacionService, 
-    private fb: FormBuilder, private utilService: UtilService){
+    private tipoServicioService: TipoServicioService, 
+    private fb: FormBuilder, private utilService: UtilService,
+    private store: Store<any>){
       this.myForm = fb.group({
         nombre: ['', [Validators.required ,Validators.minLength(2)]],
-        numeroPersonas: ['', [Validators.required, Validators.min(1)]],
-        maximoPersonas: ['', [Validators.required, Validators.min(1)]],
-        numeroCamas: ['', [Validators.required, Validators.min(1)]],
         descripcion: ['', [Validators.required]],
-        tipo: ['#42A5F5']
+        icono: ['home']
       });
 
       this.id=route.snapshot.paramMap.get('id')!;
       this.id=='0'?this.action='crear':this.action='editar';
 
       if(this.action == 'editar'){
-        this.habitacionService.get(this.id).subscribe((res: any) => {
+        this.tipoServicioService.get(this.id).subscribe((res: any) => {
           this.data = JSON.parse(res.body);
           this.myForm.controls['nombre'].setValue(this.data.nombre);
-          this.myForm.controls['numeroPersonas'].setValue(this.data.numeroPersonas);
-          this.myForm.controls['maximoPersonas'].setValue(this.data.maximoPersonas);
-          this.myForm.controls['numeroCamas'].setValue(this.data.numeroCamas);
+          this.myForm.controls['icono'].setValue(this.data.icono);
           this.myForm.controls['descripcion'].setValue(this.data.descripcion);
         });
       }
@@ -60,11 +58,13 @@ export class TipoServicioFormComponent {
       this.putFields(form);  
     }
     else{
-      this.habitacionService.post(form.value).subscribe((res) => {
-        this.utilService.openSnackBar("Información Registrada Correctamente", "Ok", 2000);
-        setTimeout(() => {
-          this.router.navigate(['/admin','tipo-habitacion']);
-        }, 2000);
+      this.tipoServicioService.post(form.value).subscribe((res) => {
+        this.utilService.openSwalBasic("Atencion","Información Registrada Correctamente", "success").then(() => {
+          this.store.dispatch(changeTiposervicio(
+            {cargado: false}
+          ));
+          this.router.navigate(['/admin','tipo-servicio']);
+        });
       });
     }
   }
@@ -97,7 +97,7 @@ export class TipoServicioFormComponent {
 
   patchField(field:string, key:string, value:string, duration:number){
     setTimeout(() => {
-      this.habitacionService.patch(this.id, key, value).subscribe((res) => {
+      this.tipoServicioService.patch(this.id, key, value).subscribe((res) => {
         this.utilService.openSnackBar(`<< ${field} >> Editado Correctamente`, "Ok", this.durationLimit);
       })
      }, duration);
@@ -131,12 +131,14 @@ export class TipoServicioFormComponent {
     }
     this.updateExpression="set "+this.updateExpression;
 
-    this.habitacionService.put(this.id, this.updateExpression.substring(0, this.updateExpression.length - 1), this.updateValues)
+    this.tipoServicioService.put(this.id, this.updateExpression.substring(0, this.updateExpression.length - 1), this.updateValues)
     .subscribe((res) => {
-      this.utilService.openSnackBar(`Campos ${this.camposEditados} Editados Correctamente`, "Ok", 2000);
-      setTimeout(() => {
-              this.router.navigate(['/admin','tipo-habitacion']);
-            }, 2000);
+      this.utilService.openSwalBasic('Atención',`Campos ${this.camposEditados} Editados Correctamente`, "success").then(() => {
+        this.store.dispatch(changeTiposervicio(
+          {cargado: false}
+        ));
+        this.router.navigate(['/admin','tipo-servicio']);
+      });
     });
   }
 

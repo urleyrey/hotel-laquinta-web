@@ -15,8 +15,8 @@
 <mat-card *ngIf="!(loading$ | async)">
     <div class="p-20 bg-info position-relative" style="margin-bottom: 20px;">
         <button routerLink="form/0" mat-mini-fab color="accent" class="add-data">+</button>
-        <h4 class="card-title text-white m-0">Tipo de Habitaciones</h4>
-        <h6 class="card-subtitle text-white m-0 op-5">Listado de tipos de habitaciones regitrados</h6>
+        <h4 class="card-title text-white m-0">{{encabezado.title}}</h4>
+        <h6 class="card-subtitle text-white m-0 op-5">{{encabezado.subtitle}}</h6>
     </div>
     <div class="message-box contact-box p-20">
         <div class="message-widget contact-widget">
@@ -29,39 +29,75 @@
                 <table mat-table [dataSource]="dataSource" matSort>
     
                     <!-- ID Column -->
-                    <ng-container matColumnDef="id">
+                    <!-- <ng-container matColumnDef="id">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
                         <td mat-cell *matCellDef="let row"> {{row.id}} </td>
-                    </ng-container>
+                    </ng-container> -->
     
                     <!-- Progress Column -->
                     <ng-container matColumnDef="nombre">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th>
-                        <td mat-cell *matCellDef="let row"> {{row.nombre}} </td>
+                        <td mat-cell *matCellDef="let row">  
+                            <mat-chip style="background-color: #26c6da;">
+                            <h2 class="card-chip-services" style="font-size: 20px;">
+                                {{row.nombre}}
+                            </h2>
+                            </mat-chip>
+                        </td>
                     </ng-container>
     
-                    <!-- Name Column -->
-                    <ng-container matColumnDef="numeroPersonas">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header> No. Personas </th>
-                        <td mat-cell *matCellDef="let row"> {{row.numeroPersonas}} </td>
-                    </ng-container>
-    
-                    <!-- Fruit Column -->
-                    <ng-container matColumnDef="maximoPersonas">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Max. Personas </th>
-                        <td mat-cell *matCellDef="let row"> {{row.maximoPersonas}} </td>
+                    <!-- Valor Column -->
+                    <ng-container matColumnDef="valor">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Valor </th>
+                        <td mat-cell *matCellDef="let row"> {{row.valor}} </td>
                     </ng-container>
 
-                    <!-- Fruit Column -->
-                    <ng-container matColumnDef="numeroCamas">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header> No. Camas </th>
-                        <td mat-cell *matCellDef="let row"> {{row.numeroCamas}} </td>
-                    </ng-container>
-
-                    <!-- Fruit Column -->
-                    <ng-container matColumnDef="descripcion">
+                    <!-- Descripcion Column -->
+                    <!-- <ng-container matColumnDef="descripcion">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> Descripcion </th>
                         <td mat-cell *matCellDef="let row"> {{row.descripcion}} </td>
+                    </ng-container> -->
+
+                    <!-- Tipo Habitacion Column -->
+                    <ng-container matColumnDef="tipoHabitacion">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Tipo </th>
+                        <td mat-cell *matCellDef="let row"> 
+                            <span>{{row.tipoHabitacion.nombre}}</span>
+                        </td>
+                    </ng-container>
+
+                    <!-- Nivel Column -->
+                    <ng-container matColumnDef="nivel">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Nivel </th>
+                        <td mat-cell *matCellDef="let row"> {{row.nivel}} </td>
+                    </ng-container>
+
+                    <!-- Serivicios Column -->
+                    <ng-container matColumnDef="servicios">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Servicios </th>
+                        <td mat-cell *matCellDef="let row"> 
+                            <div *ngFor="let x of row.servicios" style="padding: 5px;">
+                                <mat-chip style="background-color: #26c6da; padding: 0px; margin: 0px;">
+                                <div class="card-chip-services">
+                                    <mat-icon>{{x.icono}}</mat-icon>
+                                    {{x.nombre}}
+                                </div>
+                            </mat-chip>
+                            </div>
+                            
+                        </td>
+                    </ng-container>
+
+                    <!-- Estado Habitacion Column -->
+                    <ng-container matColumnDef="estadoHabitacion">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Estado </th>
+                        <td mat-cell *matCellDef="let row">
+                            <div class="cell-elements"><span class="round-span" 
+                                style='margin-right:10px;width:15px;height:15px;background: {{row.estadoHabitacion.color}} !important'>
+                            </span>
+                            <span>{{row.estadoHabitacion.nombre}}</span>
+                            </div>
+                        </td>
                     </ng-container>
 
                     <ng-container matColumnDef="accion">
@@ -71,7 +107,7 @@
                                 <mat-icon>more_vert</mat-icon>
                             </button>
                             <mat-menu #menu4="matMenu">
-                                <a mat-menu-item color="success" [routerLink]="['/admin','tipo-habitacion','form', row.id]">
+                                <a mat-menu-item color="success" [routerLink]="['/admin','habitacion','form', row.id]">
                                     <mat-icon>edit</mat-icon>
                                     <span>Editar</span>
                                 </a>
@@ -88,7 +124,7 @@
     
                     <!-- Row shown when there is no matching data. -->
                     <tr class="mat-row" *matNoDataRow>
-                        <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+                        <td class="mat-cell" colspan="7">No data matching the filter "{{input.value}}"</td>
                     </tr>
                 </table>
     

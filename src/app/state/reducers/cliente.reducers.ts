@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { loadCliente, loadedCliente } from '../actions/cliente.actions';
+import { changeCliente, loadCliente, loadedCliente, loadedClienteStore } from '../actions/cliente.actions';
 import { ClienteState } from 'src/app/core/models/state/Cliente.state';
 
 
@@ -11,7 +11,10 @@ export const clienteReducer = createReducer(
     return {...state, loading:true}
   }),
   on(loadedCliente, (state, {clientes}) => {
-    console.log("REDUCER: ", clientes);
     return {...state, loading:false, cargado: true, clientes}
+  }),on(changeCliente, (state, {cargado}) => {
+    return {...state, cargado:cargado}
+  }),on(loadedClienteStore, (state) => {
+    return {...state, loading:false, cargado: true}
   })
 );

@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { loadHabitacion, loadedHabitacion } from '../actions/habitacion.actions';
+import { changeHabitacion, loadHabitacion, loadedHabitacion, loadedHabitacionStore } from '../actions/habitacion.actions';
 import { HabitacionState } from 'src/app/core/models/state/Habitacion.state';
 
 
@@ -11,7 +11,10 @@ export const habitacionReducer = createReducer(
     return {...state, loading:true}
   }),
   on(loadedHabitacion, (state, {habitaciones}) => {
-    console.log("REDUCER: ", habitaciones);
     return {...state, loading:false, cargado: true, habitaciones}
+  }),on(changeHabitacion, (state, {cargado}) => {
+    return {...state, cargado:cargado}
+  }),on(loadedHabitacionStore, (state) => {
+    return {...state, loading:false, cargado: true}
   })
 );

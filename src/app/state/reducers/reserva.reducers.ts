@@ -1,6 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
 import { ReservaState } from 'src/app/core/models/state/Reserva.state';
-import { loadReserva, loadedReserva } from '../actions/reserva.actions';
+import { changeReserva, loadReserva, loadedReserva, loadedReservaStore } from '../actions/reserva.actions';
 
 
 export const initialState: ReservaState = {loading: false, cargado: false, reservas: []};
@@ -11,7 +11,10 @@ export const reservaReducer = createReducer(
     return {...state, loading:true}
   }),
   on(loadedReserva, (state, {reservas}) => {
-    console.log("REDUCER: ", reservas);
     return {...state, loading:false, cargado: true, reservas}
+  }),on(changeReserva, (state, {cargado}) => {
+    return {...state, cargado:cargado}
+  }),on(loadedReservaStore, (state) => {
+    return {...state, loading:false, cargado: true}
   })
 );

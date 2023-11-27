@@ -2,8 +2,10 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EstadoHabitacionService } from 'src/app/core/services/api/estado-habitacion.service';
+import { Store } from '@ngrx/store';
+import { TipoHabitacionService } from 'src/app/core/services/api/tipo-habitacion.service';
 import { UtilService } from 'src/app/core/services/util.service';
+import { changeTipohabitacion } from 'src/app/state/actions/tipohabitacion.actions';
 
 @Component({
   selector: 'app-tipo-habitacion-form',
@@ -27,29 +29,33 @@ export class TipoHabitacionFormComponent{
   myForm!: FormGroup;
   
   constructor(private router: Router,  route: ActivatedRoute,
-    private estadoHabitacionService: EstadoHabitacionService, 
-    private fb: FormBuilder, private utilService: UtilService){
+    private tipoHabitacionService: TipoHabitacionService, 
+    private fb: FormBuilder, private utilService: UtilService,
+    private store: Store<any>){
       this.myForm = fb.group({
         nombre: ['', [Validators.required ,Validators.minLength(2)]],
         numeroPersonas: ['', [Validators.required, Validators.min(1)]],
         maximoPersonas: ['', [Validators.required, Validators.min(1)]],
         numeroCamas: ['', [Validators.required, Validators.min(1)]],
         descripcion: ['', [Validators.required]],
-        tipo: ['#42A5F5']
+        color: ['#42A5F5']
       });
 
       this.id=route.snapshot.paramMap.get('id')!;
       this.id=='0'?this.action='crear':this.action='editar';
-
+      console.log("ID: ",this.id);
+      
       if(this.action == 'editar'){
         this.loading = true;
-        this.estadoHabitacionService.get(this.id).subscribe((res: any) => {
+        this.tipoHabitacionService.get(this.id).subscribe((res: any) => {
           this.data = JSON.parse(res.body);
+          console.log(this.data);
           this.myForm.controls['nombre'].setValue(this.data.nombre);
           this.myForm.controls['numeroPersonas'].setValue(this.data.numeroPersonas);
           this.myForm.controls['maximoPersonas'].setValue(this.data.maximoPersonas);
           this.myForm.controls['numeroCamas'].setValue(this.data.numeroCamas);
           this.myForm.controls['descripcion'].setValue(this.data.descripcion);
+          this.myForm.controls['color'].setValue(this.data.color);
           this.loading=false;
         });
       }
@@ -61,8 +67,11 @@ export class TipoHabitacionFormComponent{
       this.putFields(form);  
     }
     else{
-      this.estadoHabitacionService.post(form.value).subscribe((res) => {
+      this.tipoHabitacionService.post(form.value).subscribe((res) => {
         this.utilService.openSwalBasic("Atencion","Información Registrada Correctamente", "success").then(() => {
+          this.store.dispatch(changeTipohabitacion(
+            {cargado: false}
+          ));
           this.router.navigate(['/admin','tipo-habitacion']);
         });
       });
@@ -95,11 +104,19 @@ export class TipoHabitacionFormComponent{
       this.updateValues[':descripcion']=form.value.descripcion;
       this.camposEditados+=" DESCRIPCION,";
     }
+    if(form.value.color != this.data.color){
+      this.updateExpression+="color=:color,";
+      this.updateValues[':color']=form.value.color;
+      this.camposEditados+=" COLOR,";
+    }
     this.updateExpression="set "+this.updateExpression;
 
-    this.estadoHabitacionService.put(this.id, this.updateExpression.substring(0, this.updateExpression.length - 1), this.updateValues)
+    this.tipoHabitacionService.put(this.id, this.updateExpression.substring(0, this.updateExpression.length - 1), this.updateValues)
     .subscribe((res) => {
       this.utilService.openSwalBasic('Atención',`Campos ${this.camposEditados} Editados Correctamente`, "success").then(() => {
+        this.store.dispatch(changeTipohabitacion(
+          {cargado: false}
+        ));
         this.router.navigate(['/admin','tipo-habitacion']);
       });
     });

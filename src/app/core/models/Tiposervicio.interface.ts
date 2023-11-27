@@ -1,6 +1,6 @@
 export interface Tiposervicio {
     id:          string;
     nombre:      string;
-    color:       string;
+    icono:       string;
     descripcion: string;
 }

@@ -8,7 +8,7 @@ import { UtilService } from 'src/app/core/services/util.service';
 import Swal from 'sweetalert2';
 import { EstadoHabitacionService } from 'src/app/core/services/api/estado-habitacion.service';
 import { Store } from '@ngrx/store';
-import { loadEstadohabitacion, loadedEstadohabitacion } from 'src/app/state/actions/estadohabitacion.actions';
+import { changeEstadohabitacion, loadEstadohabitacion, loadedEstadohabitacion } from 'src/app/state/actions/estadohabitacion.actions';
 import { selectEstadohabitacionCargado, selectEstadohabitacionList, selectEstadohabitacionLoading } from 'src/app/state/selectors/estadohabitacion.selectors';
 import { Observable } from 'rxjs';
 
@@ -47,8 +47,10 @@ export class EstadoHabitacionComponent implements OnInit {
     this.cargado$ = this.store.select(selectEstadohabitacionCargado);
     this.cargado$.subscribe(value => {
       if(!value){
+        console.log("ESTADO HAB CARGADO DE API");
         this.cargarListadoApi();
       }else{
+        console.log("ESTADO HAB CARGADO DE STORE");
         this.cargarListadoStore();
       }
     })
@@ -56,35 +58,20 @@ export class EstadoHabitacionComponent implements OnInit {
   }
 
   async cargarListadoApi(){
-    await this.estadoHabitacionService.getAll().subscribe((res:any) => {
-      console.log(res);
-      this.listado = JSON.parse(res.body).listado;
-      this.store.dispatch(
-        loadedEstadohabitacion(
-          {estadoHabitaciones: this.listado}
-        )
-      );
-      this.dataSource = new MatTableDataSource(this.listado);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-      // this.loading=false;
-    });
+    this.listado = await this.estadoHabitacionService.getAllApi();
+    
+    this.dataSource = new MatTableDataSource(this.listado);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+    
   }
 
   async cargarListadoStore(){
-    await this.store.select(selectEstadohabitacionList).subscribe(res => {
-      console.log(res);
-      this.listado = res;
-      this.store.dispatch(
-        loadedEstadohabitacion(
-          {estadoHabitaciones: this.listado}
-        )
-      );
-      this.dataSource = new MatTableDataSource(this.listado);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-      // this.loading=false;
-    });
+    this.listado = await this.estadoHabitacionService.getAllStore();
+  
+    this.dataSource = new MatTableDataSource(this.listado);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   applyFilter(event: Event) {
@@ -114,6 +101,9 @@ export class EstadoHabitacionComponent implements OnInit {
             'El registro ha sido borrado.',
             'success'
           ).then(() =>{
+            this.store.dispatch(changeEstadohabitacion(
+              {cargado: false}
+            ));
             this.utilService.reloadCurrentRoute();
           })
         });

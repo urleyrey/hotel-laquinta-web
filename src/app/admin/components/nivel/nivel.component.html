@@ -15,18 +15,18 @@
 <mat-card *ngIf="!(loading$ | async)">
     <div class="p-20 bg-info position-relative" style="margin-bottom: 20px;">
         <!-- <button routerLink="form/0" mat-mini-fab color="accent" class="add-data">+</button> -->
-        <button (click)="abrirDialog()" mat-mini-fab color="accent" class="add-data">+</button>
+        <button (click)="abrirDialog('crear', '0')" mat-mini-fab color="accent" class="add-data">+</button>
         <h4 class="card-title text-white m-0">{{encabezado.title}}</h4>
         <h6 class="card-subtitle text-white m-0 op-5">{{encabezado.subtitle}}</h6>
     </div>
     <div class="message-box contact-box p-20">
         <div class="example-action-buttons">
-            <button mat-button (click)="accordion.openAll()">Expand All</button>
-            <button mat-button (click)="accordion.closeAll()">Collapse All</button>
+            <button mat-button (click)="accordion.openAll()">Mostrar Habitaciones</button>
+            <button mat-button (click)="accordion.closeAll()">Ocultar Habitaciones</button>
           </div>
           <mat-accordion class="example-headers-align" multi>
             
-            <mat-expansion-panel *ngFor="let item of listado | keyvalue:indexOrderDesc">
+            <mat-expansion-panel *ngFor="let item of listado | keyvalue:indexOrderAsc" [expanded]="true">
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   {{item.value.descripcion}}
@@ -36,24 +36,49 @@
                   <div matBadge="{{item.value.posicion}}" matBadgeSize="medium" class="demo-section"></div>
                 </mat-panel-description>
               </mat-expansion-panel-header>
-              
-              {{item | json}}
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="card">
-                      <div class="card-header card-header-icon card-header-rose">
-                        <div class="card-icon">
-                          <i class="material-icons"></i>
+              <mat-card-content style="margin-top: 20px;">
+                <div class="row">
+                  <div class="col-md-4 cards-servicios" *ngFor="let habitacion of item.value.habitaciones">
+                    <mat-card class="example-card">
+                      <mat-card-header style="background-color: {{habitacion.estadoHabitacion.color}};">
+                        <div mat-card-avatar class="example-header-image">
+                          <span>{{habitacion.nombre}}</span>
                         </div>
-                        <h4 class="card-title">Here is the Icon</h4>
-                      </div>
-                      <div class="card-body">
-                          The place is close to Barceloneta Beach and bus stop just 2 min by walk and near to "Naviglio" where you can enjoy the main night life in Barcelona...
-                      </div>
+                        <mat-card-title class="card-title">
+                          {{habitacion.tipoHabitacion.nombre}}
+                        </mat-card-title>
+                        <mat-card-subtitle class="card-subtitle">
+                          {{habitacion.estadoHabitacion.nombre}}
+                        </mat-card-subtitle>
+                      </mat-card-header>
+                      <mat-card-content class="card-content">
+                        <mat-chip class="card-chip" 
+                        style="background-color: {{habitacion.estadoHabitacion.color}}; padding: 5px; margin: 10px;" 
+                        *ngFor="let servicio of habitacion.servicios">
+                          <div class="card-chip-services">
+                            <mat-icon style="font-size: 1.5em; height: 1.5em; width: 1.5em; padding-top: 5px;">{{servicio.icono}}</mat-icon>
+                            {{servicio.nombre}}
+                          </div>
+                        </mat-chip>
+                      </mat-card-content>
+                      <mat-card-actions align="end" style="background-color: {{habitacion.estadoHabitacion.color}};">
+                        <button mat-mini-fab matTooltip="Reservar" color="link" 
+                        style="background-color: white; margin-left: 5px;">
+                          <mat-icon>assignment_turned_in</mat-icon>
+                        </button>
+                        <button mat-mini-fab matTooltip="Editar" color="link" 
+                        style="background-color: white; margin-left: 5px;">
+                          <mat-icon>edit</mat-icon>
+                        </button>
+                      </mat-card-actions>
+                    </mat-card>
                   </div>
                 </div>
-              </div>
-          
+              </mat-card-content>
+              <mat-action-row>
+                <button mat-raised-button color="warn" [disabled]="item.value.habitaciones.length > 0" (click)="delete(item.value.id)">Eliminar</button>
+                <button mat-raised-button color="primary" (click)="abrirDialog('editar', item.value)">Editar</button>
+              </mat-action-row>
             </mat-expansion-panel>  
 
           </mat-accordion>

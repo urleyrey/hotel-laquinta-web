@@ -11,7 +11,7 @@ import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { TipoHabitacionService } from 'src/app/core/services/api/tipo-habitacion.service';
 import { selectTipohabitacionCargado, selectTipohabitacionList, selectTipohabitacionLoading } from 'src/app/state/selectors/tipohabitacion.selectors';
-import { loadTipohabitacion, loadedTipohabitacion } from 'src/app/state/actions/tipohabitacion.actions';
+import { changeTipohabitacion, loadTipohabitacion, loadedTipohabitacion } from 'src/app/state/actions/tipohabitacion.actions';
 
 
 @Component({
@@ -26,7 +26,7 @@ export class TipoHabitacionComponent implements OnInit{
     "title": 'Tipo de Habitacion',
     "subtitle": 'Listado de tipos de habitaciones regitrados'
   }
-  displayedColumns: string[] = ['id', 'nombre', 'numeroPersonas', 'maximoPersonas', 'numeroCamas', 'descripcion', 'accion'];
+  displayedColumns: string[] = ['nombre', 'numeroPersonas', 'maximoPersonas', 'numeroCamas', 'descripcion', 'color', 'accion'];
   dataSource!: MatTableDataSource<any>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -37,8 +37,6 @@ export class TipoHabitacionComponent implements OnInit{
   constructor(private tipoHabitacionService: TipoHabitacionService, 
               private utilService: UtilService,
               private store: Store<any>) {
-    // this.cargarListado();
-    // this.loading=true;
   }
 
   ngOnInit(): void{
@@ -47,8 +45,10 @@ export class TipoHabitacionComponent implements OnInit{
     this.cargado$ = this.store.select(selectTipohabitacionCargado);
     this.cargado$.subscribe(value => {
       if(!value){
+        console.log("TIPO HAB CARGADO DE API");
         this.cargarListadoApi();
       }else{
+        console.log("TIPO HAB CARGADO DE API");
         this.cargarListadoStore();
       }
     })
@@ -56,35 +56,19 @@ export class TipoHabitacionComponent implements OnInit{
   }
 
   async cargarListadoApi(){
-    await this.tipoHabitacionService.getAll().subscribe((res:any) => {
-      console.log(res);
-      this.listado = JSON.parse(res.body).listado;
-      this.store.dispatch(
-        loadedTipohabitacion(
-          {tipoHabitaciones: this.listado}
-        )
-      );
-      this.dataSource = new MatTableDataSource(this.listado);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-      // this.loading=false;
-    });
+    this.listado = await this.tipoHabitacionService.getAllApi();
+
+    this.dataSource = new MatTableDataSource(this.listado);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   async cargarListadoStore(){
-    await this.store.select(selectTipohabitacionList).subscribe(res => {
-      console.log(res);
-      this.listado = res;
-      this.store.dispatch(
-        loadedTipohabitacion(
-          {tipoHabitaciones: this.listado}
-        )
-      );
-      this.dataSource = new MatTableDataSource(this.listado);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-      // this.loading=false;
-    });
+    this.listado = await this.tipoHabitacionService.getAllStore();
+    
+    this.dataSource = new MatTableDataSource(this.listado);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   applyFilter(event: Event) {
@@ -114,6 +98,9 @@ export class TipoHabitacionComponent implements OnInit{
             'El registro ha sido borrado.',
             'success'
           ).then(() =>{
+            this.store.dispatch(changeTipohabitacion(
+              {cargado: false}
+            ));
             this.utilService.reloadCurrentRoute();
           })
         });

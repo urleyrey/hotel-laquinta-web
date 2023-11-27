@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { TipoServicioService } from 'src/app/core/services/api/tipo-servicio.service';
 import { selectTiposervicioList, selectTiposervicioLoading } from 'src/app/state/selectors/tiposervicio.selectors';
-import { loadTiposervicio, loadedTiposervicio } from 'src/app/state/actions/tiposervicio.actions';
+import { changeTiposervicio, loadTiposervicio, loadedTiposervicio } from 'src/app/state/actions/tiposervicio.actions';
 import { selectTipohabitacionCargado } from 'src/app/state/selectors/tipohabitacion.selectors';
 
 
@@ -26,7 +26,7 @@ export class TipoServicioComponent implements OnInit {
     "title": 'Tipo de Servicio',
     "subtitle": 'Listado de tipos de servicio regitrados'
   }
-  displayedColumns: string[] = ['id', 'nombre', 'descripcion', 'color', 'accion'];
+  displayedColumns: string[] = ['id', 'nombre', 'descripcion', 'icono', 'accion'];
   dataSource!: MatTableDataSource<any>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -37,8 +37,6 @@ export class TipoServicioComponent implements OnInit {
   constructor(private tipoServicioService: TipoServicioService, 
               private utilService: UtilService,
               private store: Store<any>) {
-    // this.cargarListado();
-    // this.loading=true;
   }
 
   ngOnInit(): void{
@@ -47,43 +45,29 @@ export class TipoServicioComponent implements OnInit {
     this.cargado$ = this.store.select(selectTipohabitacionCargado);
     this.cargado$.subscribe(value => {
       if(!value){
+        console.log("TIPO SERV CARGADO DE API");
         this.cargarListadoApi();
       }else{
+        console.log("TIPO SERV CARGADO DE API");
         this.cargarListadoStore();
       }
     })
   }
 
   async cargarListadoApi(){
-    await this.tipoServicioService.getAll().subscribe((res:any) => {
-      console.log("API: ", res);
-      this.listado = JSON.parse(res.body).listado;
-      this.store.dispatch(
-        loadedTiposervicio(
-          {tipoServicios: this.listado}
-        )
-      );
-      this.dataSource = new MatTableDataSource(this.listado);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-      // this.loading=false;
-    });
+    this.listado = await this.tipoServicioService.getAllApi();
+    
+    this.dataSource = new MatTableDataSource(this.listado);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   async cargarListadoStore(){
-    await this.store.select(selectTiposervicioList).subscribe(res => {
-      console.log(res);
-      this.listado = res;
-      this.store.dispatch(
-        loadedTiposervicio(
-          {tipoServicios: this.listado}
-        )
-      );
-      this.dataSource = new MatTableDataSource(this.listado);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-      // this.loading=false;
-    });
+    this.listado = await this.tipoServicioService.getAllStore();
+      
+    this.dataSource = new MatTableDataSource(this.listado);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   applyFilter(event: Event) {
@@ -113,6 +97,9 @@ export class TipoServicioComponent implements OnInit {
             'El registro ha sido borrado.',
             'success'
           ).then(() =>{
+            this.store.dispatch(changeTiposervicio(
+              {cargado: false}
+            ));
             this.utilService.reloadCurrentRoute();
           })
         });

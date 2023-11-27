@@ -9,3 +9,12 @@ export const loadedTipohabitacion = createAction(
     '[Tipo Habitacion] Loaded List Success',
     props<{tipoHabitaciones: Tipohabitacion[]}>()
 );
+
+export const changeTipohabitacion = createAction(
+    '[Tipo Habitacion] change List Success',
+    props<{cargado: boolean}>()
+);
+
+export const loadedTipohabitacionStore = createAction(
+    '[Tipo Habitacion] Loaded List Store Success'
+);

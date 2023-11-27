@@ -1,1 +1,146 @@
-<p>habitacion-form works!</p>
+<div class="row" *ngIf="loading">
+    <div class="col-12">
+        <mat-card >
+        <mat-card-content>
+            <mat-card-title>Procesando...</mat-card-title>
+            <mat-card-subtitle>
+                <span *ngIf="action=='editar'">
+                    La información de {{encabezado.title}} se esta cargando...
+                </span>
+            </mat-card-subtitle>
+            <mat-progress-bar mode="indeterminate" value="40"></mat-progress-bar>
+        </mat-card-content>
+        </mat-card>
+    </div>
+</div>
+
+<form *ngIf="!loading" [formGroup]="myForm" (ngSubmit)="onSubmit(myForm)">
+    <mat-card>
+        <div class="p-20 bg-info position-relative" style="margin-bottom: 20px;">
+            <h4 class="card-title text-white m-0">{{encabezado.title}}</h4>
+            <h6 class="card-subtitle text-white m-0 op-5">{{encabezado.subtitle}}</h6>
+        </div>
+        <mat-card-content>
+            
+            <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
+                <div fxFlex="40%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Nombre: </mat-label>
+                        <input matInput placeholder="Digite Nombre de habitacion" formControlName="nombre">
+                        <mat-icon matSuffix>mode_edit</mat-icon>
+                        <mat-error *ngIf="myForm?.get('nombre')?.hasError('required') && (myForm?.get('nombre')?.dirty || myForm?.get('nombre')?.touched)">
+                            Por favor, digite un nombre de habitacion.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div fxFlex="30%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Valor: </mat-label>
+                        <input matInput placeholder="Digite Valor de la habitacion" formControlName="valor">
+                        <mat-icon matSuffix>mode_edit</mat-icon>
+                        <mat-error *ngIf="myForm?.get('valor')?.hasError('required') && (myForm?.get('valor')?.dirty || myForm?.get('valor')?.touched)">
+                            Por favor, digite un valor.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div fxFlex="30%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Nivel / Piso: </mat-label>
+                        <mat-select formControlName="nivel">
+                            <mat-option *ngFor="let item of listadoNivel"
+                            value="{{item.id}}">
+                                <span class="select-title">{{item.posicion}}</span>
+                                <span class="select-subtitle">
+                                    [<strong>{{item.descripcion}}</strong>]
+                                </span>
+                                <mat-divider></mat-divider>
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="myForm?.get('nivel')?.hasError('required') && (myForm?.get('nivel')?.dirty || myForm?.get('nivel')?.touched)">
+                            Por favor, seleccione un Nivel o Piso.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            
+            <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
+                <div fxFlex="100%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Descripcion: </mat-label>
+                        <input matInput placeholder="Digite Descripcion de habitacion" formControlName="descripcion">
+                        <mat-icon matSuffix>mode_edit</mat-icon>
+                        <mat-error *ngIf="myForm?.get('descripcion')?.hasError('required') && (myForm?.get('descripcion')?.dirty || myForm?.get('descripcion')?.touched)">
+                            Por favor, digite una descripcion para la habitacion.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
+                <div fxFlex="50%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Tipo Habitación: </mat-label>
+                        <mat-select formControlName="tipoHabitacion">
+                            <mat-option *ngFor="let item of listadoTipoHabitacion"
+                            value="{{item.id}}">
+                                <span class="select-title">{{item.nombre}}</span>
+                                <br>
+                                <span class="select-subtitle">
+                                    [Camas: <strong>{{item.numeroCamas}}</strong> <> 
+                                    Personas: <strong>{{item.numeroPersonas}}</strong> ({{item.maximoPersonas}})]
+                                </span>
+                                <mat-divider></mat-divider>
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="myForm?.get('tipoHabitacion')?.hasError('required') && (myForm?.get('tipoHabitacion')?.dirty || myForm?.get('tipoHabitacion')?.touched)">
+                            Por favor, seleccione un tipo de habitacion.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div fxFlex="50%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Estado Habitación: </mat-label>
+                        <mat-select formControlName="estadoHabitacion">
+                            <mat-option *ngFor="let item of listadoEstadoHabitacion"
+                            value="{{item.id}}" 
+                            [ngStyle]="{ backgroundColor: item.color, padding: '5px' }">
+                             {{item.nombre}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="myForm?.get('estadoHabitacion')?.hasError('required') && (myForm?.get('estadoHabitacion')?.dirty || myForm?.get('estadoHabitacion')?.touched)">
+                            Por favor, seleccione un estado de habitacion.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            {{listadoTipoServicio | json }}
+            <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
+                <div fxFlex="100%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Servicios: </mat-label>
+                        <mat-select formControlName="servicios" multiple>
+                            <mat-option *ngFor="let item of listadoTipoServicio"
+                            value="{{item.id}}" 
+                            [ngStyle]="{ backgroundColor: item.color, padding: '5px' }">
+                            <mat-icon>{{item.icono}}</mat-icon><strong>{{item.nombre}}</strong>
+                            <span class="select-subtitle">
+                                [{{item.descripcion}}]
+                            </span>
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="myForm?.get('estadoHabitacion')?.hasError('required') && (myForm?.get('estadoHabitacion')?.dirty || myForm?.get('estadoHabitacion')?.touched)">
+                            Por favor, seleccione un estado de habitacion.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+                
+        </mat-card-content>
+        <mat-card-actions align="end">
+            <button mat-raised-button color="warn" class="m-20" (click)="goBack()">Cancelar</button>
+            <button mat-raised-button color="primary" class="m-20" type="submit" [disabled]="myForm.invalid">Guardar</button>
+        </mat-card-actions>
+    </mat-card>
+</form>
+
+

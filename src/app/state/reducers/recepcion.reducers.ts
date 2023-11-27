@@ -1,6 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
 import { RecepcionState } from 'src/app/core/models/state/Recepcion.state';
-import { loadRecepcion, loadedRecepcion } from '../actions/recepcion.actions';
+import { changeRecepcion, loadRecepcion, loadedRecepcion, loadedRecepcionStore } from '../actions/recepcion.actions';
 
 
 export const initialState: RecepcionState = {loading: false, cargado: false, recepciones: []};
@@ -11,7 +11,10 @@ export const recepcionReducer = createReducer(
     return {...state, loading:true}
   }),
   on(loadedRecepcion, (state, {recepciones}) => {
-    console.log("REDUCER: ", recepciones);
     return {...state, loading:false, cargado: true, recepciones}
+  }),on(changeRecepcion, (state, {cargado}) => {
+    return {...state, cargado:cargado}
+  }),on(loadedRecepcionStore, (state) => {
+    return {...state, loading:false, cargado: true}
   })
 );
