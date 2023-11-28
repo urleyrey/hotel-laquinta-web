@@ -21,6 +21,7 @@ import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { ROOT_REDUCERS } from './state/app.state';
+import { NgxMatDatetimePickerModule, NgxMatNativeDateModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
 
 
 @NgModule({
@@ -38,6 +39,9 @@ import { ROOT_REDUCERS } from './state/app.state';
     FormsModule,
     HttpClientModule,
     SharedModule,
+    NgxMatDatetimePickerModule,
+    NgxMatTimepickerModule,
+    NgxMatNativeDateModule,
     CoreModule,
     RouterModule.forRoot(AppRoutes),
     AppSidebarComponent,

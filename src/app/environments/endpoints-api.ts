@@ -12,5 +12,13 @@ export const api = {
         nivelOne: 'nivel',
         tiposervicioAll: 'tipo-servicios',
         tiposervicioOne: 'tipo-servicio',
+        reservaAll: 'reservas',
+        reservaOne: 'reserva',
+        recepcionAll: 'recepciones',
+        recepcionOne: 'recepcion',
+        movimientoAll: 'movimientos',
+        movimientoOne: 'movimiento',
+        cajaAll: 'cajas',
+        cajaOne: 'caja'
     }
 }
