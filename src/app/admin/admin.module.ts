@@ -14,6 +14,13 @@ import { EstadoHabitacionComponent } from './components/estado-habitacion/estado
 import { EstadoHabitacionFormComponent } from './components/estado-habitacion/form/estado-habitacion-form/estado-habitacion-form.component';
 import { TipoServicioFormComponent } from './components/tipo-servicio/form/tipo-servicio-form/tipo-servicio-form.component';
 import { NivelFormComponent } from './components/nivel/form/nivel-form/nivel-form.component';
+import { ReservaComponent } from './components/reserva/reserva.component';
+import { ReservaFormComponent } from './components/reserva/reserva-form/reserva-form.component';
+import {
+  NgxMatDatetimePickerModule, 
+  NgxMatNativeDateModule, 
+  NgxMatTimepickerModule 
+} from '@angular-material-components/datetime-picker';
 
 
 @NgModule({
@@ -28,12 +35,17 @@ import { NivelFormComponent } from './components/nivel/form/nivel-form/nivel-for
     EstadoHabitacionFormComponent,
     TipoServicioFormComponent,
     NivelFormComponent,
+    ReservaComponent,
+    ReservaFormComponent
   ],
   imports: [
     CommonModule,
     AdminRoutingModule,
     DemoMaterialModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgxMatDatetimePickerModule,
+    NgxMatTimepickerModule,
+    NgxMatNativeDateModule,
   ]
 })
 export class AdminModule { }

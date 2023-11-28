@@ -10,6 +10,8 @@ import { TipoServicioComponent } from './components/tipo-servicio/tipo-servicio.
 import { TipoServicioFormComponent } from './components/tipo-servicio/form/tipo-servicio-form/tipo-servicio-form.component';
 import { EstadoHabitacionComponent } from './components/estado-habitacion/estado-habitacion.component';
 import { EstadoHabitacionFormComponent } from './components/estado-habitacion/form/estado-habitacion-form/estado-habitacion-form.component';
+import { ReservaComponent } from './components/reserva/reserva.component';
+import { ReservaFormComponent } from './components/reserva/reserva-form/reserva-form.component';
 
 const routes: Routes = [
   {
@@ -51,6 +53,14 @@ const routes: Routes = [
   {
     path: 'estado-habitacion/form/:id',
     component: EstadoHabitacionFormComponent
+  },
+  {
+    path: 'reserva',
+    component: ReservaComponent
+  },
+  {
+    path: 'reserva/form/:id',
+    component: ReservaFormComponent
   }
 ];
 
