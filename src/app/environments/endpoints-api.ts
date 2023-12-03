@@ -19,6 +19,8 @@ export const api = {
         movimientoAll: 'movimientos',
         movimientoOne: 'movimiento',
         cajaAll: 'cajas',
-        cajaOne: 'caja'
+        cajaOne: 'caja',
+        generalAll: 'generales',
+        generalOne: 'general'
     }
 }

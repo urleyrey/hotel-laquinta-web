@@ -21,13 +21,12 @@ import { TipoHabitacionService } from 'src/app/core/services/api/tipo-habitacion
 import { NivelService } from 'src/app/core/services/api/nivel.service';
 import { TipoServicioService } from 'src/app/core/services/api/tipo-servicio.service';
 import { GeneralService } from 'src/app/core/services/api/general.service';
-import { configReserva } from './reserva.config';
-
+import { configReserva } from '../reserva/reserva.config';
 
 @Component({
-  selector: 'app-reserva',
-  templateUrl: './reserva.component.html',
-  styleUrls: ['./reserva.component.scss'],
+  selector: 'app-recepcion',
+  templateUrl: './recepcion.component.html',
+  styleUrls: ['./recepcion.component.scss'],
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({height: '0px', minHeight: '0'})),
@@ -36,12 +35,12 @@ import { configReserva } from './reserva.config';
     ]),
   ],
 })
-export class ReservaComponent implements OnInit, OnDestroy {
+export class RecepcionComponent {
   columnsToDisplay =  ['habitacion', 'valor', 'fechaInicio', 'fechaFin', 'estado'];
   columnsToDisplayWithExpand = [...this.columnsToDisplay, 'expand'];
-  expandedElement: any;
+  expandedElement: PeriodicElement | null | undefined;
 
-  tabla = 'reserva';
+  tabla = 'recepcion';
   loading: boolean = true;
   listado: any = [];
   encabezado = {
@@ -64,6 +63,8 @@ export class ReservaComponent implements OnInit, OnDestroy {
   listadoHabitacion: any;
   cargadoTipoServicio$: Observable<boolean> = new Observable<boolean>;
   listadoTipoServicio: any;
+  cargadoReserva$: Observable<boolean> = new Observable<boolean>;
+  listadoReserva: any;
   subscriptionCargado$!: Subscription;
   subscriptionLoading$!: Subscription;
 
@@ -84,17 +85,18 @@ export class ReservaComponent implements OnInit, OnDestroy {
     await this.cargarListadoApi();
     console.log("PRUEBA:", this.listado);
     await this.mapearListado();
+    await this.mapearReserva();
     this.cargarDataSourceTable(this.listado);
   }
 
   async cargarSelects() {
     await this.cargarTiposHabitacion();
     await this.cargarHabitacion();
+    await this.cargarReserva();
   }
 
   cargarListado() {
     this.cargarListadoApi();
-    console.log(this.listado);
   }
 
   ngOnDestroy(): void {
@@ -152,14 +154,19 @@ export class ReservaComponent implements OnInit, OnDestroy {
     await this.cargarListadoDesdeApi('habitacion');
   }
 
+  public async cargarReserva() {
+    await this.cargarListadoDesdeApi('reserva');
+  }
 
   async cargarListadoDesdeApi(tabla: string) {
     if (tabla == 'tipo-habitacion') {
       this.listadoTipoHabitacion = await this.tipoHabitacionService.getAllApi();
     }
     if (tabla == 'habitacion') {
-      console.log("ENTRO");
       this.listadoHabitacion = await this.habitacionService.getAllApi();
+    }
+    if (tabla == 'reserva') {
+      this.listadoReserva = await this.generalService.getAllApi(tabla);
     }
   }
 
@@ -190,7 +197,21 @@ export class ReservaComponent implements OnInit, OnDestroy {
       })[0];
     }
     this.listado = listadoAux;
-    console.log(this.listado);
+  }
+
+  mapearReserva() {
+    let listadoAux = JSON.parse(JSON.stringify(this.listadoReserva));
+    for (let x of listadoAux) {
+      x.habitacion = this.utilService.getObjeto(x.habitacion, this.listadoHabitacion);
+      let habitacion = JSON.parse(JSON.stringify(x.habitacion));
+      habitacion.tipoHabitacion = this.utilService.getObjeto(x.habitacion.tipoHabitacion, this.listadoTipoHabitacion);
+      x.habitacion = habitacion;
+      x.estado = this.listadoEstados.filter((data: any) => {
+        return data.id == x.estado
+      })[0];
+    }
+    this.listadoReserva = listadoAux;
+    console.log("MAPEAR RESERVAS:", listadoAux);
   }
 }
 

@@ -26,7 +26,7 @@ export class TipoServicioComponent implements OnInit {
     "title": 'Tipo de Servicio',
     "subtitle": 'Listado de tipos de servicio regitrados'
   }
-  displayedColumns: string[] = ['id', 'nombre', 'descripcion', 'icono', 'accion'];
+  displayedColumns: string[] = ['nombre', 'descripcion', 'icono', 'accion'];
   dataSource!: MatTableDataSource<any>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;

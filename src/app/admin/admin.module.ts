@@ -21,6 +21,8 @@ import {
   NgxMatNativeDateModule, 
   NgxMatTimepickerModule 
 } from '@angular-material-components/datetime-picker';
+import { RecepcionComponent } from './components/recepcion/recepcion.component';
+import { RecepcionFormComponent } from './components/recepcion/recepcion-form/recepcion-form.component';
 
 
 @NgModule({
@@ -36,7 +38,9 @@ import {
     TipoServicioFormComponent,
     NivelFormComponent,
     ReservaComponent,
-    ReservaFormComponent
+    ReservaFormComponent,
+    RecepcionComponent,
+    RecepcionFormComponent
   ],
   imports: [
     CommonModule,

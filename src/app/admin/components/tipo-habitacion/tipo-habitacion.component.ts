@@ -39,7 +39,14 @@ export class TipoHabitacionComponent implements OnInit{
               private store: Store<any>) {
   }
 
-  ngOnInit(): void{
+  async ngOnInit(): Promise<void>{
+
+    await this.cargarListadoApi();
+    this.cargarDataSourceTable(this.listado);
+    
+  }
+
+  cargarListado(){
     this.loading$ = this.store.select(selectTipohabitacionLoading);
     this.store.dispatch(loadTipohabitacion());
     this.cargado$ = this.store.select(selectTipohabitacionCargado);
@@ -52,7 +59,6 @@ export class TipoHabitacionComponent implements OnInit{
         this.cargarListadoStore();
       }
     })
-    
   }
 
   async cargarListadoApi(){
@@ -65,7 +71,9 @@ export class TipoHabitacionComponent implements OnInit{
 
   async cargarListadoStore(){
     this.listado = await this.tipoHabitacionService.getAllStore();
-    
+  }
+
+  cargarDataSourceTable(listado:any){
     this.dataSource = new MatTableDataSource(this.listado);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;

@@ -20,22 +20,21 @@ import { selectEstadohabitacionCargado, selectEstadohabitacionList } from 'src/a
 import { selectNivelCargado, selectNivelList } from 'src/app/state/selectors/nivel.selectors';
 import { selectTipohabitacionCargado, selectTipohabitacionList } from 'src/app/state/selectors/tipohabitacion.selectors';
 import { selectTiposervicioCargado, selectTiposervicioList } from 'src/app/state/selectors/tiposervicio.selectors';
-import { configReserva } from '../reserva.config'
+import { configReserva } from '../../reserva/reserva.config'
 import { ReservaService } from 'src/app/core/services/api/reserva.service';
 import { GeneralService } from 'src/app/core/services/api/general.service';
 
 @Component({
-  selector: 'app-reserva-form',
-  templateUrl: './reserva-form.component.html',
-  styleUrls: ['./reserva-form.component.scss'],
+  selector: 'app-recepcion-form',
+  templateUrl: './recepcion-form.component.html',
+  styleUrls: ['./recepcion-form.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class ReservaFormComponent implements OnInit {
-
+export class RecepcionFormComponent {
   @ViewChild('picker', { static: true }) picker: any;
   @ViewChild('pickerFin', { static: true }) pickerFin: any;
 
-  private tabla="reserva";
+  private tabla="recepcion";
   public disabled = false;
   public showSpinners = true;
   public showSeconds = false;
@@ -73,8 +72,8 @@ export class ReservaFormComponent implements OnInit {
   duration: number = 0;
   durationLimit=1000;
   encabezado = {
-    "title": 'Reserva',
-    "subtitle": 'Información de Reserva'
+    "title": 'Recepcion',
+    "subtitle": 'Información de Recepcion'
   }
   myForm!: FormGroup;
   cargadoEstadoHabitacion$: Observable<boolean> = new Observable<boolean>;
@@ -86,6 +85,7 @@ export class ReservaFormComponent implements OnInit {
   cargadoTipoServicio$: Observable<boolean> = new Observable<boolean>;
   listadoTipoServicio:any;
   listadoHabitacion:any;
+  listadoReserva: any;
   
   constructor(private router: Router,  private route: ActivatedRoute,
     private habitacionService: HabitacionService, 
@@ -106,6 +106,9 @@ export class ReservaFormComponent implements OnInit {
         estado: ['', [Validators.required]],
         fechaInicio: ['', [Validators.required]],
         fechaFin: ['', [Validators.required]],
+        adicional: [0, [Validators.required]],
+        descuento: [0, [Validators.required]],
+        reserva: [''],
       });
       
   }
@@ -119,7 +122,6 @@ export class ReservaFormComponent implements OnInit {
         this.loading = true;
         this.generalService.get(this.id, this.tabla).subscribe((res: any) => {
           this.data = JSON.parse(res.body);
-          console.log(this.data);
           this.myForm.controls['numeroPersonas'].setValue(this.data.numeroPersonas);
           this.myForm.controls['valor'].setValue(this.data.valor);
           this.myForm.controls['habitacion'].setValue(this.data.habitacion);
@@ -128,17 +130,22 @@ export class ReservaFormComponent implements OnInit {
           this.myForm.controls['estado'].setValue(this.data.estado);
           this.myForm.controls['fechaInicio'].setValue(this.data.fechaInicio);
           this.myForm.controls['fechaFin'].setValue(this.data.fechaFin);
+          this.myForm.controls['adicional'].setValue(this.data.adicional);
+          this.myForm.controls['descuento'].setValue(this.data.descuento);
+          this.myForm.controls['reserva'].setValue(this.data.reserva);
           this.loading=false;
         });
       }
       await this.cargarSelects();
       await this.cargarHabitaciones();
       await this.mapearHabitaciones();
+      await this.mapearReserva();
   }
 
   async cargarSelects(){
     await this.cargarEstadosHabitacion();
     await this.cargarTiposHabitacion();
+    await this.cargarReserva();
   }
 
   onSubmit(form: any) {
@@ -149,7 +156,7 @@ export class ReservaFormComponent implements OnInit {
       this.generalService.post(form.value, this.tabla).subscribe((res) => {
         this.utilService.openSwalBasic("Atencion","Información Registrada Correctamente", "success").then(() => {
           
-          this.router.navigate(['/admin','reserva']);
+          this.router.navigate(['/admin','recepcion']);
         });
       });
     }
@@ -206,6 +213,21 @@ export class ReservaFormComponent implements OnInit {
       this.updateValues[':fechaFin']=form.value.fechaFin;
       this.camposEditados+=" FECHA FIN,";
     }
+    if(form.value.adicional != this.data.adicional){
+      this.updateExpression+="adicional=:adicional,";
+      this.updateValues[':adicional']=form.value.adicional;
+      this.camposEditados+=" VALOR ADICIONAL,";
+    }
+    if(form.value.descuento != this.data.descuento){
+      this.updateExpression+="descuento=:descuento,";
+      this.updateValues[':descuento']=form.value.descuento;
+      this.camposEditados+=" DESCUENTO,";
+    }
+    if(form.value.reserva != this.data.reserva){
+      this.updateExpression+="reserva=:reserva,";
+      this.updateValues[':reserva']=form.value.reserva;
+      this.camposEditados+=" RESERVA,";
+    }
     this.updateExpression="set "+this.updateExpression;
 
     this.generalService.put(this.id, this.updateExpression.substring(0, this.updateExpression.length - 1), this.updateValues, this.tabla)
@@ -236,7 +258,7 @@ export class ReservaFormComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['admin/habitacion']);
+    this.router.navigate(['admin/recepcion']);
   }
 
   async cargarHabitaciones(){
@@ -251,6 +273,10 @@ export class ReservaFormComponent implements OnInit {
     await this.cargarListadoDesdeApi('tipo-habitacion');
   }
 
+  public async cargarReserva() {
+    await this.cargarListadoDesdeApi('reserva');
+  }
+
 
   async cargarListadoDesdeApi(tabla:string){
     if(tabla=='estado-habitacion'){
@@ -262,6 +288,9 @@ export class ReservaFormComponent implements OnInit {
     if(tabla=='habitacion'){
       this.listadoHabitacion = await this.habitacionService.getAllApi();
     }
+    if (tabla == 'reserva') {
+      this.listadoReserva = await this.generalService.getAllApi(tabla);
+    }
   }
 
   mapearHabitaciones(){
@@ -271,7 +300,6 @@ export class ReservaFormComponent implements OnInit {
       x.estadoHabitacion = this.utilService.getObjeto(x.estadoHabitacion, this.listadoEstadoHabitacion);
     }
     this.listadoHabitacion=listadoAux;
-    console.log("HABITACION: ", this.listadoHabitacion);
   }
 
   habitacionChange(habitacion:any){
@@ -279,4 +307,19 @@ export class ReservaFormComponent implements OnInit {
     this.myForm.controls['valor'].setValue(hab.valor);
   }
 
+  mapearReserva() {
+    let listadoAux = JSON.parse(JSON.stringify(this.listadoReserva));
+    for (let x of listadoAux) {
+      console.log("PRUEBA:", listadoAux, x.habitacion, this.listadoHabitacion);
+      x.habitacion = this.utilService.getObjeto(x.habitacion, this.listadoHabitacion);
+      let habitacion = JSON.parse(JSON.stringify(x.habitacion));
+      habitacion.tipoHabitacion = this.utilService.getObjeto(x.habitacion.tipoHabitacion, this.listadoTipoHabitacion);
+      x.habitacion = habitacion;
+      x.estado = this.listadoEstados.filter((data: any) => {
+        return data.id == x.estado
+      })[0];
+    }
+    this.listadoReserva = listadoAux;
+    console.log("MAPEAR RESERVAS:", listadoAux);
+  }
 }

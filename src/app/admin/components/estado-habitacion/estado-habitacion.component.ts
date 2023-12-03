@@ -25,7 +25,7 @@ export class EstadoHabitacionComponent implements OnInit {
     "title": 'Estados de Habitacion',
     "subtitle": 'Listado de estados de habitaciones regitrados'
   }
-  displayedColumns: string[] = ['id', 'nombre', 'descripcion', 'color', 'accion'];
+  displayedColumns: string[] = ['nombre', 'descripcion', 'color', 'accion'];
   dataSource!: MatTableDataSource<any>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -41,7 +41,13 @@ export class EstadoHabitacionComponent implements OnInit {
     
   }
 
-  ngOnInit(): void{
+  async ngOnInit(): Promise<void>{
+    await this.cargarListadoApi();
+    this.cargarDataSourceTable(this.listado);
+    
+  }
+
+  cargarListado(){
     this.loading$ = this.store.select(selectEstadohabitacionLoading);
     this.store.dispatch(loadEstadohabitacion());
     this.cargado$ = this.store.select(selectEstadohabitacionCargado);
@@ -54,24 +60,20 @@ export class EstadoHabitacionComponent implements OnInit {
         this.cargarListadoStore();
       }
     })
-    
   }
 
   async cargarListadoApi(){
     this.listado = await this.estadoHabitacionService.getAllApi();
-    
+  }
+
+  cargarDataSourceTable(listado:any){
     this.dataSource = new MatTableDataSource(this.listado);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    
   }
 
   async cargarListadoStore(){
     this.listado = await this.estadoHabitacionService.getAllStore();
-  
-    this.dataSource = new MatTableDataSource(this.listado);
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
   }
 
   applyFilter(event: Event) {

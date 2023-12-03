@@ -12,6 +12,8 @@ import { EstadoHabitacionComponent } from './components/estado-habitacion/estado
 import { EstadoHabitacionFormComponent } from './components/estado-habitacion/form/estado-habitacion-form/estado-habitacion-form.component';
 import { ReservaComponent } from './components/reserva/reserva.component';
 import { ReservaFormComponent } from './components/reserva/reserva-form/reserva-form.component';
+import { RecepcionComponent } from './components/recepcion/recepcion.component';
+import { RecepcionFormComponent } from './components/recepcion/recepcion-form/recepcion-form.component';
 
 const routes: Routes = [
   {
@@ -61,6 +63,14 @@ const routes: Routes = [
   {
     path: 'reserva/form/:id',
     component: ReservaFormComponent
+  },
+  {
+    path: 'recepcion',
+    component: RecepcionComponent
+  },
+  {
+    path: 'recepcion/form/:id',
+    component: RecepcionFormComponent
   }
 ];
 

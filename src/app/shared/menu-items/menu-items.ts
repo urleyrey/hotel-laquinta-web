@@ -65,7 +65,8 @@ const MENUDASHBOARD = [
 ];
 
 const MENURESERVA = [
-  { state: 'reserva', name: 'Reservar', type: 'link', icon: 'assignment' }
+  { state: 'reserva', name: 'Reservar', type: 'link', icon: 'assignment' },
+  { state: 'recepcion', name: 'Recepcion', type: 'link', icon: 'assignment' },
 ];
 
 @Injectable()

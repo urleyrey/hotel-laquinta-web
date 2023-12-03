@@ -99,6 +99,17 @@
                         <span style="margin-bottom: 0px;"><strong>Observciones</strong></span>
                         <p>{{element.observaciones}}</p>
                         <mat-divider>&nbsp;</mat-divider>
+                        <div style="display: flex;">
+                            <span style="width: 50%; padding: 10px;">
+                                <strong>Valor adicional:</strong>
+                                <span>{{element.adicional}}</span>
+                            </span>
+                            <span style="width: 50%; padding: 10px;">
+                                <strong>Descuento:</strong>
+                                <span>{{element.descuento}}</span>
+                            </span>
+                        </div>
+                        <mat-divider>&nbsp;</mat-divider>
                     </mat-card-content>
                     <mat-card-actions align="end">
                         <button mat-flat-button color="warn" class="m-20" >
