@@ -37,7 +37,7 @@ import { configReserva } from './reserva.config';
   ],
 })
 export class ReservaComponent implements OnInit, OnDestroy {
-  columnsToDisplay =  ['habitacion', 'valor', 'fechaInicio', 'fechaFin', 'estado'];
+  columnsToDisplay =  ['cliente', 'habitacion', 'valor', 'fechaInicio', 'fechaFin', 'estado'];
   columnsToDisplayWithExpand = [...this.columnsToDisplay, 'expand'];
   expandedElement: any;
 
@@ -64,6 +64,7 @@ export class ReservaComponent implements OnInit, OnDestroy {
   listadoHabitacion: any;
   cargadoTipoServicio$: Observable<boolean> = new Observable<boolean>;
   listadoTipoServicio: any;
+  listadoCliente: any;
   subscriptionCargado$!: Subscription;
   subscriptionLoading$!: Subscription;
 
@@ -90,6 +91,7 @@ export class ReservaComponent implements OnInit, OnDestroy {
   async cargarSelects() {
     await this.cargarTiposHabitacion();
     await this.cargarHabitacion();
+    await this.cargarCliente();
   }
 
   cargarListado() {
@@ -152,14 +154,20 @@ export class ReservaComponent implements OnInit, OnDestroy {
     await this.cargarListadoDesdeApi('habitacion');
   }
 
+  public async cargarCliente() {
+    await this.cargarListadoDesdeApi('cliente');
+  }
+
 
   async cargarListadoDesdeApi(tabla: string) {
     if (tabla == 'tipo-habitacion') {
       this.listadoTipoHabitacion = await this.tipoHabitacionService.getAllApi();
     }
     if (tabla == 'habitacion') {
-      console.log("ENTRO");
       this.listadoHabitacion = await this.habitacionService.getAllApi();
+    }
+    if (tabla == 'cliente') {
+      this.listadoCliente = await this.generalService.getAllApi(tabla);
     }
   }
 
@@ -188,6 +196,7 @@ export class ReservaComponent implements OnInit, OnDestroy {
       x.estado = this.listadoEstados.filter((data: any) => {
         return data.id == x.estado
       })[0];
+      x.cliente = this.utilService.getObjeto(x.cliente, this.listadoCliente);
     }
     this.listado = listadoAux;
     console.log(this.listado);

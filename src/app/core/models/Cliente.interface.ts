@@ -10,3 +10,9 @@ export interface Cliente {
     sexo:           string;
     fechaNacimiento:string; // -> DD/MM/YYYY
 }
+
+export interface TipoDocumento {
+    id:             number;
+    value:          string;
+    descripcion:    string;
+}

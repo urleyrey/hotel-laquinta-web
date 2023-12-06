@@ -86,6 +86,7 @@ export class RecepcionFormComponent {
   listadoTipoServicio:any;
   listadoHabitacion:any;
   listadoReserva: any;
+  listadoCliente: any;
   
   constructor(private router: Router,  private route: ActivatedRoute,
     private habitacionService: HabitacionService, 
@@ -109,6 +110,7 @@ export class RecepcionFormComponent {
         adicional: [0, [Validators.required]],
         descuento: [0, [Validators.required]],
         reserva: [''],
+        cliente: [''],
       });
       
   }
@@ -133,6 +135,7 @@ export class RecepcionFormComponent {
           this.myForm.controls['adicional'].setValue(this.data.adicional);
           this.myForm.controls['descuento'].setValue(this.data.descuento);
           this.myForm.controls['reserva'].setValue(this.data.reserva);
+          this.myForm.controls['cliente'].setValue(this.data.cliente);
           this.loading=false;
         });
       }
@@ -146,6 +149,7 @@ export class RecepcionFormComponent {
     await this.cargarEstadosHabitacion();
     await this.cargarTiposHabitacion();
     await this.cargarReserva();
+    await this.cargarCliente();
   }
 
   onSubmit(form: any) {
@@ -163,6 +167,11 @@ export class RecepcionFormComponent {
   }
 
   putFields(form: any){
+    if(form.value.cliente != this.data.cliente){
+      this.updateExpression+="cliente=:cliente,";
+      this.updateValues[':cliente']=form.value.cliente;
+      this.camposEditados+=" CLIENTE,";
+    }
     if(form.value.numeroPersonas != this.data.numeroPersonas){
       this.updateExpression+="numeroPersonas=:numeroPersonas,";
       this.updateValues[':numeroPersonas']=form.value.numeroPersonas;
@@ -236,7 +245,7 @@ export class RecepcionFormComponent {
         this.store.dispatch(changeHabitacion(
           {cargado: false}
         ));
-        this.router.navigate(['/admin','reserva']);
+        this.router.navigate(['/admin','recepcion']);
       });
     });
   }
@@ -277,6 +286,9 @@ export class RecepcionFormComponent {
     await this.cargarListadoDesdeApi('reserva');
   }
 
+  public async cargarCliente() {
+    await this.cargarListadoDesdeApi('cliente');
+  }
 
   async cargarListadoDesdeApi(tabla:string){
     if(tabla=='estado-habitacion'){
@@ -290,6 +302,9 @@ export class RecepcionFormComponent {
     }
     if (tabla == 'reserva') {
       this.listadoReserva = await this.generalService.getAllApi(tabla);
+    }
+    if (tabla == 'cliente') {
+      this.listadoCliente = await this.generalService.getAllApi(tabla);
     }
   }
 
@@ -307,6 +322,25 @@ export class RecepcionFormComponent {
     this.myForm.controls['valor'].setValue(hab.valor);
   }
 
+  reservaChange(reserva:any){
+    if(reserva != '0') {
+      let res = this.utilService.getObjeto(reserva, this.listadoReserva);
+      console.log(res);
+      this.myForm.controls['cliente'].setValue(res.cliente.id);
+      this.myForm.controls['habitacion'].setValue(res.habitacion.id);
+      this.myForm.controls['valor'].setValue(res.valor);
+      this.myForm.controls['numeroPersonas'].setValue(res.numeroPersonas);
+      this.myForm.controls['estado'].setValue(String(res.estado.id));
+      this.myForm.controls['observaciones'].setValue(res.observaciones);
+      this.myForm.controls['motivoViaje'].setValue(res.motivoViaje);
+      this.myForm.controls['fechaInicio'].setValue(res.fechaInicio);
+      this.myForm.controls['fechaFin'].setValue(res.fechaFin);
+    }else{
+      this.myForm.reset();
+    }
+    
+  }
+
   mapearReserva() {
     let listadoAux = JSON.parse(JSON.stringify(this.listadoReserva));
     for (let x of listadoAux) {
@@ -318,6 +352,7 @@ export class RecepcionFormComponent {
       x.estado = this.listadoEstados.filter((data: any) => {
         return data.id == x.estado
       })[0];
+      x.cliente = this.utilService.getObjeto(x.cliente, this.listadoCliente);
     }
     this.listadoReserva = listadoAux;
     console.log("MAPEAR RESERVAS:", listadoAux);

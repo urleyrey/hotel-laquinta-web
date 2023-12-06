@@ -10,4 +10,5 @@ export interface Reserva {
     observaciones: string;
     motivoViaje: string;
     estado: string;
+    cliente: string;
 }

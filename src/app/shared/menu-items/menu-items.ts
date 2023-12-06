@@ -69,6 +69,10 @@ const MENURESERVA = [
   { state: 'recepcion', name: 'Recepcion', type: 'link', icon: 'assignment' },
 ];
 
+const MENUCLIENTE = [
+  { state: 'cliente', name: 'Cliente', type: 'link', icon: 'person' },
+];
+
 @Injectable()
 export class MenuItems {
   getMenuitem(): Menu[] {
@@ -82,5 +86,8 @@ export class MenuItems {
   }
   getMenuReserva(): Menu[] {
     return MENURESERVA;
+  }
+  getMenuCliente(): Menu[] {
+    return MENUCLIENTE;
   }
 }

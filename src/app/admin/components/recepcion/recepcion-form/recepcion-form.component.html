@@ -24,6 +24,59 @@
             <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
                 <div fxFlex="100%">
                     <mat-form-field class="p-20">
+                        <mat-label>Reserva: </mat-label>
+                        <mat-select formControlName="reserva" (selectionChange)="reservaChange($event.value)">
+                            <mat-option value="0">Sin Reserva Previa</mat-option>
+                            <mat-option *ngFor="let item of listadoReserva"
+                            value="{{item.id}}">
+                                <span class="select-title">
+                                    {{item.cliente.tipoDocumento}}{{item.cliente.numeroDocumento}} 
+                                     {{item.cliente.apellidos}}, {{item.cliente.nombres}}
+                                </span>
+                                <span class="select-subtitle">
+                                    [<strong>{{item.habitacion.nombre}}-{{item.habitacion.descripcion}}</strong>]
+                                </span>
+                                <br>
+                                <span class="select-subtitle">
+                                    Desde: 
+                                    <strong>[{{item.fechaInicio | date:'dd/MM/yyyy hh:mm aaa'}}]</strong>
+                                    a: 
+                                    <strong>[{{item.fechaFin | date:'dd/MM/yyyy hh:mm aaa'}}]</strong>
+                                </span>
+                                <mat-divider></mat-divider>
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="myForm?.get('reserva')?.hasError('required') && (myForm?.get('reserva')?.dirty || myForm?.get('reserva')?.touched)">
+                            Por favor, seleccione una Habitacion.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
+                <div fxFlex="100%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Cliente: </mat-label>
+                        <mat-select formControlName="cliente">
+                            <mat-option *ngFor="let item of listadoCliente"
+                            value="{{item.id}}">
+                                <span class="select-title">{{item.tipoDocumento}}-{{item.numeroDocumento}}</span>
+                                <span class="select-subtitle">
+                                    [<strong>{{item.apellidos}}, {{item.nombres}}</strong>]
+                                </span>
+                                <mat-divider></mat-divider>
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="myForm?.get('habitacion')?.hasError('required') && (myForm?.get('habitacion')?.dirty || myForm?.get('habitacion')?.touched)">
+                            Por favor, seleccione una Habitacion.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
+                <div fxFlex="100%">
+                    <mat-form-field class="p-20">
                         <mat-label>Habitación: </mat-label>
                         <mat-select formControlName="habitacion" (selectionChange)="habitacionChange($event.value)">
                             <mat-option *ngFor="let item of listadoHabitacion"
@@ -71,7 +124,6 @@
                             [ngStyle]="{ padding: '5px' }">
                              <strong [ngStyle]="{color: item.color}">{{item.value}}</strong>
                             </mat-option>
-                            {{estado}}
                         </mat-select>
                         <mat-error *ngIf="myForm?.get('estado')?.hasError('required') && (myForm?.get('estado')?.dirty || myForm?.get('estado')?.touched)">
                             Por favor, seleccione un estado de reserva.
@@ -108,7 +160,7 @@
             <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
                 <div fxFlex="50%">
                     <mat-form-field class="p-20">
-                        <input matInput [ngxMatDatetimePicker]="picker" placeholder="Choose a date" formControlName="fechaInicio"
+                        <input matInput [ngxMatDatetimePicker]="picker" placeholder="Fecha Inicio" formControlName="fechaInicio"
                           [min]="minDate" [max]="maxDate" [disabled]="disabled">
                         <ngx-mat-datepicker-toggle matSuffix [for]="picker"></ngx-mat-datepicker-toggle>
                         <ngx-mat-datetime-picker #picker [showSpinners]="showSpinners" [showSeconds]="showSeconds"
@@ -126,7 +178,7 @@
                 </div>
                 <div fxFlex="50%">
                     <mat-form-field class="p-20">
-                        <input matInput [ngxMatDatetimePicker]="pickerFin" placeholder="Choose a date" formControlName="fechaFin"
+                        <input matInput [ngxMatDatetimePicker]="pickerFin" placeholder="Fecha Fin" formControlName="fechaFin"
                           [min]="minDate" [max]="maxDate" [disabled]="disabled">
                         <ngx-mat-datepicker-toggle matSuffix [for]="pickerFin"></ngx-mat-datepicker-toggle>
                         <ngx-mat-datetime-picker #pickerFin [showSpinners]="showSpinners" [showSeconds]="showSeconds"

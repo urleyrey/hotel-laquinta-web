@@ -1,0 +1,157 @@
+<div class="row" *ngIf="loading">
+    <div class="col-12">
+        <mat-card >
+        <mat-card-content>
+            <mat-card-title>Procesando...</mat-card-title>
+            <mat-card-subtitle>
+                <span *ngIf="action=='editar'">
+                    La información de {{encabezado.title}} se esta cargando...
+                </span>
+            </mat-card-subtitle>
+            <mat-progress-bar mode="indeterminate" value="40"></mat-progress-bar>
+        </mat-card-content>
+        </mat-card>
+    </div>
+</div>
+
+<form *ngIf="!loading" [formGroup]="myForm" (ngSubmit)="onSubmit(myForm)">
+    <mat-card>
+        <div class="p-20 bg-info position-relative" style="margin-bottom: 20px;">
+            <h4 class="card-title text-white m-0">{{encabezado.title}}</h4>
+            <h6 class="card-subtitle text-white m-0 op-5">{{encabezado.subtitle}}</h6>
+        </div>
+        <mat-card-content>
+            <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
+                <div fxFlex="50%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Tipo Documento: </mat-label>
+                        <mat-select formControlName="tipoDocumento">
+                            <mat-option *ngFor="let item of listadoTipoDocumentos"
+                            value="{{item.id}}">
+                                <strong>{{item.id}}</strong>-{{item.descripcion}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="myForm?.get('tipoDocumento')?.hasError('required') && (myForm?.get('tipoDocumento')?.dirty || myForm?.get('tipoDocumento')?.touched)">
+                            Por favor, seleccione un Tipo de Documento.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div fxFlex="50%">
+                    <mat-form-field class="p-20">
+                        <mat-label>No. Documento: </mat-label>
+                        <input matInput placeholder="Digite Numero de Documento" formControlName="numeroDocumento">
+                        <mat-icon matSuffix>mode_edit</mat-icon>
+                        <mat-error *ngIf="myForm?.get('numeroDocumento')?.hasError('required') && (myForm?.get('numeroDocumento')?.dirty || myForm?.get('numeroDocumento')?.touched)">
+                            Por favor, digite un Numero de Documento.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
+                <div fxFlex="50%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Nombres: </mat-label>
+                        <input matInput placeholder="Digite Nombres del Cliente" formControlName="nombres">
+                        <mat-icon matSuffix>mode_edit</mat-icon>
+                        <mat-error *ngIf="myForm?.get('nombres')?.hasError('required') && (myForm?.get('nombres')?.dirty || myForm?.get('nombres')?.touched)">
+                            Por favor, digite Nombres del Cliente.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div fxFlex="50%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Apellidos: </mat-label>
+                        <input matInput placeholder="Digite Apellidos del Cliente" formControlName="apellidos">
+                        <mat-icon matSuffix>mode_edit</mat-icon>
+                        <mat-error *ngIf="myForm?.get('apellidos')?.hasError('required') && (myForm?.get('apellidos')?.dirty || myForm?.get('apellidos')?.touched)">
+                            Por favor, digite Apellidos del Cliente.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            
+            <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
+                <div fxFlex="100%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Dirección: </mat-label>
+                        <input matInput placeholder="Digite Dirección del Cliente" formControlName="direccion">
+                        <mat-icon matSuffix>mode_edit</mat-icon>
+                        <mat-error *ngIf="myForm?.get('direccion')?.hasError('required') && (myForm?.get('direccion')?.dirty || myForm?.get('direccion')?.touched)">
+                            Por favor, digite Dirección del Cliente.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
+                <div fxFlex="70%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Email: </mat-label>
+                        <input matInput placeholder="Digite Email del Cliente" formControlName="email">
+                        <mat-icon matSuffix>mode_edit</mat-icon>
+                        <mat-error *ngIf="myForm?.get('email')?.hasError('required') && (myForm?.get('email')?.dirty || myForm?.get('email')?.touched)">
+                            Por favor, digite Email del Cliente.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div fxFlex="30%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Sexo: </mat-label>
+                        <mat-select formControlName="sexo">
+                            <mat-option value="M">
+                                <strong>Masculino</strong>
+                            </mat-option>
+                            <mat-option value="F">
+                                <strong>Femenino</strong>
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="myForm?.get('sexo')?.hasError('required') && (myForm?.get('sexo')?.dirty || myForm?.get('sexo')?.touched)">
+                            Por favor, seleccione un Sexo.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
+                <div fxFlex="50%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Telefono: </mat-label>
+                        <input matInput placeholder="Digite Telefono del Cliente" formControlName="telefono">
+                        <mat-icon matSuffix>mode_edit</mat-icon>
+                        <mat-error *ngIf="myForm?.get('telefono')?.hasError('required') && (myForm?.get('telefono')?.dirty || myForm?.get('telefono')?.touched)">
+                            Por favor, digite Telefono del Cliente.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                
+                <div fxFlex="50%">
+                    <mat-form-field class="p-20">
+                        <input matInput [ngxMatDatetimePicker]="picker" placeholder="Fecha de Nacimiento" formControlName="fechaNacimiento"
+                          [min]="minDate" [max]="maxDate" [disabled]="disabled">
+                        <ngx-mat-datepicker-toggle matSuffix [for]="picker"></ngx-mat-datepicker-toggle>
+                        <ngx-mat-datetime-picker #picker [showSpinners]="showSpinners" [showSeconds]="showSeconds"
+                          [stepHour]="stepHour" [stepMinute]="stepMinute" [stepSecond]="stepSecond" [touchUi]="touchUi"
+                          [enableMeridian]="enableMeridian" [disableMinute]="disableMinute" [hideTime]="hideTime"
+                          [defaultTime]="defaultTime">
+        
+                          <ngx-mat-datepicker-actions>
+                            <button mat-button color="warn" ngxMatDatepickerCancel>Cancel</button>
+                            <button mat-raised-button color="primary" ngxMatDatepickerApply>Aplicar</button>
+                          </ngx-mat-datepicker-actions>  
+        
+                        </ngx-mat-datetime-picker>
+                    </mat-form-field>
+                </div>
+            </div>
+            
+                
+        </mat-card-content>
+        <mat-card-actions align="end">
+            <button mat-raised-button color="warn" class="m-20" (click)="goBack()">Cancelar</button>
+            <button mat-raised-button color="primary" class="m-20" type="submit" [disabled]="myForm.invalid">Guardar</button>
+        </mat-card-actions>
+    </mat-card>
+</form>
+

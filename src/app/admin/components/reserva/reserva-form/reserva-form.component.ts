@@ -86,6 +86,7 @@ export class ReservaFormComponent implements OnInit {
   cargadoTipoServicio$: Observable<boolean> = new Observable<boolean>;
   listadoTipoServicio:any;
   listadoHabitacion:any;
+  listadoCliente:any;
   
   constructor(private router: Router,  private route: ActivatedRoute,
     private habitacionService: HabitacionService, 
@@ -106,6 +107,7 @@ export class ReservaFormComponent implements OnInit {
         estado: ['', [Validators.required]],
         fechaInicio: ['', [Validators.required]],
         fechaFin: ['', [Validators.required]],
+        cliente: ['', [Validators.required]],
       });
       
   }
@@ -128,6 +130,7 @@ export class ReservaFormComponent implements OnInit {
           this.myForm.controls['estado'].setValue(this.data.estado);
           this.myForm.controls['fechaInicio'].setValue(this.data.fechaInicio);
           this.myForm.controls['fechaFin'].setValue(this.data.fechaFin);
+          this.myForm.controls['cliente'].setValue(this.data.cliente);
           this.loading=false;
         });
       }
@@ -139,6 +142,7 @@ export class ReservaFormComponent implements OnInit {
   async cargarSelects(){
     await this.cargarEstadosHabitacion();
     await this.cargarTiposHabitacion();
+    await this.cargarClientes();
   }
 
   onSubmit(form: any) {
@@ -156,6 +160,11 @@ export class ReservaFormComponent implements OnInit {
   }
 
   putFields(form: any){
+    if(form.value.cliente != this.data.cliente){
+      this.updateExpression+="cliente=:cliente,";
+      this.updateValues[':cliente']=form.value.cliente;
+      this.camposEditados+=" CLIENTE,";
+    }
     if(form.value.numeroPersonas != this.data.numeroPersonas){
       this.updateExpression+="numeroPersonas=:numeroPersonas,";
       this.updateValues[':numeroPersonas']=form.value.numeroPersonas;
@@ -173,7 +182,7 @@ export class ReservaFormComponent implements OnInit {
     }
     if(form.value.observaciones != this.data.observaciones){
       this.updateExpression+="observaciones=:observaciones,";
-      this.updateValues[':servicios']=form.value.observaciones;
+      this.updateValues[':observaciones']=form.value.observaciones;
       this.camposEditados+=" OBSERVACIONES,";
     }
     if(form.value.motivoViaje != this.data.motivoViaje){
@@ -236,7 +245,7 @@ export class ReservaFormComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['admin/habitacion']);
+    this.router.navigate(['admin/reserva']);
   }
 
   async cargarHabitaciones(){
@@ -251,6 +260,10 @@ export class ReservaFormComponent implements OnInit {
     await this.cargarListadoDesdeApi('tipo-habitacion');
   }
 
+  public async cargarClientes(){
+    await this.cargarListadoDesdeApi('cliente');
+  }
+
 
   async cargarListadoDesdeApi(tabla:string){
     if(tabla=='estado-habitacion'){
@@ -261,6 +274,9 @@ export class ReservaFormComponent implements OnInit {
     }
     if(tabla=='habitacion'){
       this.listadoHabitacion = await this.habitacionService.getAllApi();
+    }
+    if(tabla=='cliente'){
+      this.listadoCliente = await this.generalService.getAllApi('cliente');
     }
   }
 

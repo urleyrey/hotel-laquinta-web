@@ -31,59 +31,37 @@
                 [dataSource]="dataSource" multiTemplateDataRows
                 class="mat-elevation-z8" matSort>
             
-            
-            <!-- <ng-container matColumnDef="{{column}}" *ngFor="let column of columnsToDisplay">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> {{column}} </th>
-                <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
-            </ng-container> -->
-
-            <!-- Cliente Column -->
-            <ng-container matColumnDef="cliente">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Cliente </th>
+            <!-- Documento Column -->
+            <ng-container matColumnDef="numeroDocumento">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Documento </th>
                 <td mat-cell *matCellDef="let row">  
-                    <strong>[{{row.cliente.tipoDocumento}}-{{row.cliente.numeroDocumento}}]</strong> -
-                    {{row.cliente.apellidos}}, {{row.cliente.nombres}}
+                    <strong>[{{row.tipoDocumento.id}}] -
+                    {{row.numeroDocumento}}</strong>
                 </td>
             </ng-container>
 
-            <!-- Habitacion Column -->
-            <ng-container matColumnDef="habitacion">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Habitacion </th>
-                <td mat-cell *matCellDef="let row">  
-                    <strong>[{{row.habitacion.nombre}}]</strong> -
-                    {{row.habitacion.tipoHabitacion.nombre}}
-                </td>
+            <!-- Nombres Column -->
+            <ng-container matColumnDef="nombres">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombres y Apellidos </th>
+                <td mat-cell *matCellDef="let row"> {{row.apellidos}}, {{row.nombres}} </td>
             </ng-container>
 
-            <!-- Valor Column -->
-            <ng-container matColumnDef="valor">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Valor </th>
-                <td mat-cell *matCellDef="let row"> {{row.valor | currency: 'USD':'symbol':'1.0-0' | lowercase}} </td>
+            <!-- Sexo Column -->
+            <ng-container matColumnDef="sexo">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Sexo </th>
+                <td mat-cell *matCellDef="let row"> {{row.sexo == 'M' ? 'Masculino' : 'Femenino' }} </td>
             </ng-container>
 
-            <!-- Fecha Inicio Column -->
-            <ng-container matColumnDef="fechaInicio">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha Inicio </th>
-                <td mat-cell *matCellDef="let row"> {{row.fechaInicio | date:'medium'}} </td>
+            <!-- Email Column -->
+            <ng-container matColumnDef="email">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Email </th>
+                <td mat-cell *matCellDef="let row"> {{row.email}} </td>
             </ng-container>
 
-            <!-- Fecha Fin Column -->
-            <ng-container matColumnDef="fechaFin">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha Fin </th>
-                <td mat-cell *matCellDef="let row"> {{row.fechaFin | date:'medium'}} </td>
-            </ng-container>
-
-            <!-- Estado Column -->
-            <ng-container matColumnDef="estado">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Estado </th>
-                <td mat-cell *matCellDef="let row">
-                    <div class="cell-elements" style=" border-radius: 10px; border: 2px {{row.estado.color}} solid; padding: 5px 10px;">
-                    <span class="round-span" 
-                        style='margin-right:10px;width:15px;height:15px;background: {{row.estado.color}} !important'>
-                    </span>
-                    <strong style="color: {{row.estado.color}} !important;">{{row.estado.value}}</strong>
-                    </div>
-                </td>
+            <!-- Telefono Column -->
+            <ng-container matColumnDef="telefono">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Telefono </th>
+                <td mat-cell *matCellDef="let row"> {{row.telefono}} </td>
             </ng-container>
 
             <ng-container matColumnDef="expand">
@@ -102,20 +80,20 @@
                 <mat-card class="example-element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
                     <mat-card-content>
                         <mat-divider>&nbsp;</mat-divider>
-                        <span style="margin-bottom: 0px;"><strong>Motivo viaje:</strong></span>
-                        <p>{{element.motivoViaje}}</p>
-                        <mat-divider>&nbsp;</mat-divider>
-                        <span style="margin-bottom: 0px;"><strong>Observciones</strong></span>
-                        <p>{{element.observaciones}}</p>
+                        <span style="margin-bottom: 0px;"><strong>Datos Adicionales:</strong></span>
+                        <p>
+                            <strong>Dirección: </strong><span>{{element.direccion}}</span> --
+                            <strong>Fecha Nacimiento: </strong><span>{{element.fechaNacimiento | date:'mediumDate'}}</span>
+                        </p>
                         <mat-divider>&nbsp;</mat-divider>
                     </mat-card-content>
                     <mat-card-actions align="end">
-                        <button mat-flat-button color="warn" class="m-20" >
+                        <button mat-flat-button color="warn" class="m-20" (click)="delete(row.id)">
                             <mat-icon>delete</mat-icon>
                             <span>Eliminar</span>
                         </button>
                         <button mat-flat-button color="accent" class="m-20" 
-                        [routerLink]="['/admin','reserva','form', element.id]">
+                        [routerLink]="['/admin','cliente','form', element.id]">
                             <mat-icon>edit</mat-icon>
                             <span>Editar</span>
                         </button>
@@ -145,3 +123,4 @@
         </div>
     </div>
 </mat-card>
+

@@ -14,4 +14,5 @@ export interface Recepcion {
     estado: string;
     descuento: number;
     adicional: number;
+    cliente: string;
 }
