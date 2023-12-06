@@ -25,6 +25,7 @@ import { RecepcionComponent } from './components/recepcion/recepcion.component';
 import { RecepcionFormComponent } from './components/recepcion/recepcion-form/recepcion-form.component';
 import { ClienteComponent } from './components/cliente/cliente.component';
 import { ClienteFormComponent } from './components/cliente/form/cliente-form.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 
 @NgModule({
@@ -54,6 +55,7 @@ import { ClienteFormComponent } from './components/cliente/form/cliente-form.com
     NgxMatDatetimePickerModule,
     NgxMatTimepickerModule,
     NgxMatNativeDateModule,
+    NgSelectModule
   ]
 })
 export class AdminModule { }
