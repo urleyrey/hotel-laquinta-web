@@ -34,6 +34,15 @@ export class RecepcionFormComponent {
   @ViewChild('picker', { static: true }) picker: any;
   @ViewChild('pickerFin', { static: true }) pickerFin: any;
 
+  selectedCar!: number;
+
+  cars = [
+      { id: 1, name: 'Volvo' },
+      { id: 2, name: 'Saab' },
+      { id: 3, name: 'Opel' },
+      { id: 4, name: 'Audi' },
+  ];
+
   private tabla="recepcion";
   public disabled = false;
   public showSpinners = true;
@@ -325,7 +334,7 @@ export class RecepcionFormComponent {
   reservaChange(reserva:any){
     if(reserva != '0') {
       let res = this.utilService.getObjeto(reserva, this.listadoReserva);
-      console.log(res);
+      console.log(reserva, res);
       this.myForm.controls['cliente'].setValue(res.cliente.id);
       this.myForm.controls['habitacion'].setValue(res.habitacion.id);
       this.myForm.controls['valor'].setValue(res.valor);

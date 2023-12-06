@@ -23,7 +23,7 @@
         <mat-card-content>
             <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
                 <div fxFlex="100%">
-                    <mat-form-field class="p-20">
+                    <!-- <mat-form-field class="p-20">
                         <mat-label>Cliente: </mat-label>
                         <mat-select formControlName="cliente">
                             <mat-option *ngFor="let item of listadoCliente"
@@ -38,12 +38,25 @@
                         <mat-error *ngIf="myForm?.get('habitacion')?.hasError('required') && (myForm?.get('habitacion')?.dirty || myForm?.get('habitacion')?.touched)">
                             Por favor, seleccione una Habitacion.
                         </mat-error>
-                    </mat-form-field>
+                    </mat-form-field> -->
+                    <div class="p-20">
+                        <mat-label>Cliente: </mat-label>
+                        <ng-select formControlName="cliente">
+                            <ng-option *ngFor="let item of listadoCliente"
+                            value="{{item.id}}">
+                                <span class="select-title">{{item.tipoDocumento}}-{{item.numeroDocumento}}</span>
+                                <span class="select-subtitle">
+                                    [<strong>{{item.apellidos}}, {{item.nombres}}</strong>]
+                                </span>
+                                <mat-divider></mat-divider>
+                            </ng-option>
+                        </ng-select>
+                    </div>
                 </div>
             </div>
             <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
                 <div fxFlex="100%">
-                    <mat-form-field class="p-20">
+                    <!-- <mat-form-field class="p-20">
                         <mat-label>Habitación: </mat-label>
                         <mat-select formControlName="habitacion" (selectionChange)="habitacionChange($event.value)">
                             <mat-option *ngFor="let item of listadoHabitacion"
@@ -58,7 +71,23 @@
                         <mat-error *ngIf="myForm?.get('habitacion')?.hasError('required') && (myForm?.get('habitacion')?.dirty || myForm?.get('habitacion')?.touched)">
                             Por favor, seleccione una Habitacion.
                         </mat-error>
-                    </mat-form-field>
+                    </mat-form-field> -->
+                    <div class="p-20">
+                        <mat-label>Habitación: </mat-label>
+                        <ng-select formControlName="habitacion" (change)="habitacionChange($event)">
+                            <ng-option *ngFor="let item of listadoHabitacion" 
+                            value="{{item.id}}">
+                                <span class="select-title">{{item.nombre}}</span>
+                                <span class="select-subtitle">
+                                    [<strong>{{item.descripcion}}</strong>]
+                                </span>
+                                <mat-divider></mat-divider>
+                            </ng-option>
+                        </ng-select>
+                        <mat-error *ngIf="myForm?.get('habitacion')?.hasError('required') && (myForm?.get('habitacion')?.dirty || myForm?.get('habitacion')?.touched)">
+                            Por favor, seleccione una Habitacion.
+                        </mat-error>
+                    </div>
                 </div>
             </div>
             <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
