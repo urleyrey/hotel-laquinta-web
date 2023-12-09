@@ -65,6 +65,8 @@ export class ReservaFormComponent implements OnInit {
   listadoEstados = JSON.parse(JSON.stringify(configReserva)).estados;
   loading:boolean = false;
   id:string='0';
+  to='';
+  from='';
   data:any;
   updateExpression:string = '';
   updateValues:any = {};
@@ -114,8 +116,12 @@ export class ReservaFormComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.id=this.route.snapshot.paramMap.get('id')!;
+    const range = this.route.snapshot.paramMap.get('range')!;
+    this.to=range.split('to')[1];
+    this.from=range.split('to')[0];
+
       this.id=='0'?this.action='crear':this.action='editar';
-      console.log("ID: ",this.id);
+      console.log("ID: ",this.id, this.from, this.to);
       
       if(this.action == 'editar'){
         this.loading = true;
@@ -133,6 +139,11 @@ export class ReservaFormComponent implements OnInit {
           this.myForm.controls['cliente'].setValue(this.data.cliente);
           this.loading=false;
         });
+      }else{
+        if(range != 'to'){
+          this.myForm.controls['fechaInicio'].setValue(new Date(this.from+' 12:00:00'));
+          this.myForm.controls['fechaFin'].setValue(new Date(this.to+' 12:00:00'));
+        }
       }
       await this.cargarSelects();
       await this.cargarHabitaciones();
