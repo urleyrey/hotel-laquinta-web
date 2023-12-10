@@ -22,6 +22,7 @@ import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { ROOT_REDUCERS } from './state/app.state';
 import { NgxMatDatetimePickerModule, NgxMatNativeDateModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
+import { FullCalendarModule } from '@fullcalendar/angular';
 
 
 @NgModule({
@@ -48,13 +49,16 @@ import { NgxMatDatetimePickerModule, NgxMatNativeDateModule, NgxMatTimepickerMod
     FormsModule,
     SweetAlert2Module.forRoot(),
     StoreModule.forRoot(ROOT_REDUCERS),
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() })
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
+    FullCalendarModule 
   ],
   providers: [
     {
       provide: LocationStrategy,
       useClass: PathLocationStrategy
     }
+  ],
+  exports: [
   ],
   bootstrap: [AppComponent]
 })

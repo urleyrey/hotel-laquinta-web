@@ -26,6 +26,8 @@ import { RecepcionFormComponent } from './components/recepcion/recepcion-form/re
 import { ClienteComponent } from './components/cliente/cliente.component';
 import { ClienteFormComponent } from './components/cliente/form/cliente-form.component';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { CalendarioComponent } from './calendario/calendario.component';
+import { FullCalendarModule } from '@fullcalendar/angular';
 
 
 @NgModule({
@@ -45,7 +47,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
     RecepcionComponent,
     RecepcionFormComponent,
     ClienteComponent,
-    ClienteFormComponent
+    ClienteFormComponent,
+    CalendarioComponent
   ],
   imports: [
     CommonModule,
@@ -55,7 +58,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
     NgxMatDatetimePickerModule,
     NgxMatTimepickerModule,
     NgxMatNativeDateModule,
-    NgSelectModule
+    NgSelectModule,
+    FullCalendarModule
   ]
 })
 export class AdminModule { }

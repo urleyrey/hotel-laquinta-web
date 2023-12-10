@@ -16,6 +16,7 @@ import { RecepcionComponent } from './components/recepcion/recepcion.component';
 import { RecepcionFormComponent } from './components/recepcion/recepcion-form/recepcion-form.component';
 import { ClienteComponent } from './components/cliente/cliente.component';
 import { ClienteFormComponent } from './components/cliente/form/cliente-form.component';
+import { CalendarioComponent } from './calendario/calendario.component';
 
 const routes: Routes = [
   {
@@ -63,7 +64,7 @@ const routes: Routes = [
     component: ReservaComponent
   },
   {
-    path: 'reserva/form/:id',
+    path: 'reserva/form/:id/:range',
     component: ReservaFormComponent
   },
   {
@@ -71,7 +72,7 @@ const routes: Routes = [
     component: RecepcionComponent
   },
   {
-    path: 'recepcion/form/:id',
+    path: 'recepcion/form/:id/:range',
     component: RecepcionFormComponent
   },
   {
@@ -81,6 +82,10 @@ const routes: Routes = [
   {
     path: 'cliente/form/:id',
     component: ClienteFormComponent
+  },
+  {
+    path: 'calendario',
+    component: CalendarioComponent
   }
 ];
 

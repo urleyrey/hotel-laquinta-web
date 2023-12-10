@@ -345,7 +345,15 @@ export class RecepcionFormComponent {
       this.myForm.controls['fechaInicio'].setValue(res.fechaInicio);
       this.myForm.controls['fechaFin'].setValue(res.fechaFin);
     }else{
-      this.myForm.reset();
+      this.myForm.controls['cliente'].setValue('');
+      this.myForm.controls['habitacion'].setValue('');
+      this.myForm.controls['valor'].setValue(0);
+      this.myForm.controls['numeroPersonas'].setValue(0);
+      this.myForm.controls['estado'].setValue('');
+      this.myForm.controls['observaciones'].setValue('');
+      this.myForm.controls['motivoViaje'].setValue('');
+      this.myForm.controls['fechaInicio'].setValue('');
+      this.myForm.controls['fechaFin'].setValue('');
     }
     
   }

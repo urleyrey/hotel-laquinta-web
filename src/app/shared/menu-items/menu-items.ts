@@ -65,6 +65,7 @@ const MENUDASHBOARD = [
 ];
 
 const MENURESERVA = [
+  { state: 'calendario', name: 'Calendario', type: 'link', icon: 'calendar_today' },
   { state: 'reserva', name: 'Reservar', type: 'link', icon: 'assignment' },
   { state: 'recepcion', name: 'Recepcion', type: 'link', icon: 'assignment' },
 ];
