@@ -18,6 +18,11 @@ import { configReserva } from '../components/reserva/reserva.config';
 })
 export class CalendarioComponent implements OnInit {
 
+  encabezado = {
+    title: 'Calendario Reservas y Recepciones',
+    subtitle: 'Agenda con información general de Reservas y/o Recepciones por dia'
+  }
+
   calendarOptions: CalendarOptions = {
     height: 650,
     locales: [ esLocale ],
