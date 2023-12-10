@@ -67,11 +67,17 @@ const MENUDASHBOARD = [
 const MENURESERVA = [
   { state: 'calendario', name: 'Calendario', type: 'link', icon: 'calendar_today' },
   { state: 'reserva', name: 'Reservar', type: 'link', icon: 'assignment' },
-  { state: 'recepcion', name: 'Recepcion', type: 'link', icon: 'assignment' },
+  { state: 'recepcion', name: 'Recepcion', type: 'link', icon: 'room_service' },
 ];
 
 const MENUCLIENTE = [
   { state: 'cliente', name: 'Cliente', type: 'link', icon: 'person' },
+];
+
+const MENUCAJA = [
+  { state: 'producto', name: 'Producto/Servicio', type: 'link', icon: 'ballot' },
+  { state: 'movimiento', name: 'Movimientos', type: 'link', icon: 'attach_money' },
+  { state: 'Caja', name: 'Caja Menor', type: 'link', icon: 'local_atm' },
 ];
 
 @Injectable()
@@ -90,5 +96,9 @@ export class MenuItems {
   }
   getMenuCliente(): Menu[] {
     return MENUCLIENTE;
+  }
+
+  getMenuCaja(): Menu[] {
+    return MENUCAJA;
   }
 }

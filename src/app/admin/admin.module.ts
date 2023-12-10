@@ -28,6 +28,12 @@ import { ClienteFormComponent } from './components/cliente/form/cliente-form.com
 import { NgSelectModule } from '@ng-select/ng-select';
 import { CalendarioComponent } from './calendario/calendario.component';
 import { FullCalendarModule } from '@fullcalendar/angular';
+import { ProductoComponent } from './components/producto/producto.component';
+import { MovimientoComponent } from './components/movimiento/movimiento.component';
+import { ProductoFormComponent } from './components/producto/form/producto-form.component';
+import { MovimientoFormComponent } from './components/movimiento/form/movimiento-form.component';
+import { CajaComponent } from './components/caja/caja.component';
+import { CajaFormComponent } from './components/caja/form/caja-form.component';
 
 
 @NgModule({
@@ -48,7 +54,13 @@ import { FullCalendarModule } from '@fullcalendar/angular';
     RecepcionFormComponent,
     ClienteComponent,
     ClienteFormComponent,
-    CalendarioComponent
+    CalendarioComponent,
+    ProductoComponent,
+    MovimientoComponent,
+    ProductoFormComponent,
+    MovimientoFormComponent,
+    CajaComponent,
+    CajaFormComponent
   ],
   imports: [
     CommonModule,

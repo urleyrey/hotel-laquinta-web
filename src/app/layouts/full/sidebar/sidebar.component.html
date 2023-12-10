@@ -63,6 +63,16 @@
         </a>
     </mat-list-item>
 
+    <div mat-subheader>CAJA DIARIA</div>
+    <mat-list-item appAccordionLink *ngFor="let menuitem of menuItems.getMenuCaja()" routerLinkActive="selected">
+        <a class="" appAccordionToggle [routerLink]="['/admin', menuitem.state]" *ngIf="menuitem.type === 'link'">
+            <mat-icon>{{ menuitem.icon }}</mat-icon>
+            <span>{{ menuitem.name }}</span>
+            <span fxFlex></span>
+
+        </a>
+    </mat-list-item>
+
     <div mat-subheader>EJEMPLOS</div>
     <mat-list-item appAccordionLink *ngFor="let menuitem of menuItems.getMenuitem()" routerLinkActive="selected">
         <a class="" appAccordionToggle [routerLink]="['/', menuitem.state]" *ngIf="menuitem.type === 'link'">
