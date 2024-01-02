@@ -5,4 +5,6 @@ export interface Caja {
     ingresos:       number;
     egresos:        number;
     observaciones:  string;
+    valorInicial:   string;
+    estado:         string;
 }

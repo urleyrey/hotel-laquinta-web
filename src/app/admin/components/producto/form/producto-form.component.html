@@ -1,1 +1,72 @@
-<p>producto-form works!</p>
+<div class="row" *ngIf="loading">
+    <div class="col-12">
+        <mat-card >
+        <mat-card-content>
+            <mat-card-title>Procesando...</mat-card-title>
+            <mat-card-subtitle>
+                <span *ngIf="action=='editar'">
+                    La información de {{encabezado.title}} se esta cargando...
+                </span>
+            </mat-card-subtitle>
+            <mat-progress-bar mode="indeterminate" value="40"></mat-progress-bar>
+        </mat-card-content>
+        </mat-card>
+    </div>
+</div>
+
+<form *ngIf="!loading" [formGroup]="myForm" (ngSubmit)="onSubmit(myForm)">
+    <mat-card>
+        <div class="p-20 bg-info position-relative" style="margin-bottom: 20px;">
+            <h4 class="card-title text-white m-0">{{encabezado.title}}</h4>
+            <h6 class="card-subtitle text-white m-0 op-5">{{encabezado.subtitle}}</h6>
+        </div>
+        <mat-card-content>
+            <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
+                <div fxFlex="50%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Tipo de Producto: </mat-label>
+                        <mat-select formControlName="tipoProducto">
+                            <mat-option *ngFor="let item of listadoTipoProductos"
+                            value="{{item.id}}">
+                                <strong>{{item.id}}</strong>-{{item.descripcion}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="myForm?.get('tipoProducto')?.hasError('required') && (myForm?.get('tipoProducto')?.dirty || myForm?.get('tipoProducto')?.touched)">
+                            Por favor, seleccione un Tipo de Producto.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div fxFlex="50%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Valor: </mat-label>
+                        <input matInput placeholder="Digite Valor" formControlName="valor">
+                        <mat-icon matSuffix>mode_edit</mat-icon>
+                        <mat-error *ngIf="myForm?.get('valor')?.hasError('required') && (myForm?.get('valor')?.dirty || myForm?.get('valor')?.touched)">
+                            Por favor, digite un Valor.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
+                <div fxFlex="100%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Descripcion: </mat-label>
+                        <input matInput placeholder="Digite Descripcion del Producto" formControlName="descripcion">
+                        <mat-icon matSuffix>mode_edit</mat-icon>
+                        <mat-error *ngIf="myForm?.get('descripcion')?.hasError('required') && (myForm?.get('descripcion')?.dirty || myForm?.get('descripcion')?.touched)">
+                            Por favor, digite Descripción del Producto.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                
+            </div>
+                
+        </mat-card-content>
+        <mat-card-actions align="end">
+            <button mat-raised-button color="warn" class="m-20" (click)="goBack()">Cancelar</button>
+            <button mat-raised-button color="primary" class="m-20" type="submit" [disabled]="myForm.invalid">Guardar</button>
+        </mat-card-actions>
+    </mat-card>
+</form>
+

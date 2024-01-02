@@ -1,1 +1,133 @@
-<p>caja works!</p>
+<div class="row" *ngIf="loading$ | async">
+    <div class="col-12">
+        <mat-card >
+        <mat-card-content>
+            <mat-card-title>Cargando...</mat-card-title>
+            <mat-card-subtitle>
+                Obteniendo Listado de {{encabezado.title}}
+            </mat-card-subtitle>
+            <mat-progress-bar mode="indeterminate" value="40"></mat-progress-bar>
+        </mat-card-content>
+        </mat-card>
+    </div>
+</div>
+
+<mat-card *ngIf="!(loading$ | async)">
+    <div class="p-20 bg-info position-relative" style="margin-bottom: 20px;">
+        <button routerLink="form/0" mat-mini-fab color="accent" class="add-data">+</button>
+        <h4 class="card-title text-white m-0">{{encabezado.title}}</h4>
+        <h6 class="card-subtitle text-white m-0 op-5">{{encabezado.subtitle}}</h6>
+    </div>
+    <div class="message-box contact-box p-20">
+        <div class="message-widget contact-widget">
+            <mat-form-field>
+                <mat-label>Filter</mat-label>
+                <input matInput (keyup)="applyFilter($event)" placeholder="" #input>
+            </mat-form-field>
+    
+            <div class="mat-elevation-z8">
+
+            <table mat-table
+                [dataSource]="dataSource" multiTemplateDataRows
+                class="mat-elevation-z8" matSort>
+            
+            <!-- Observaciones Column -->
+            <ng-container matColumnDef="observaciones">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Observaciones </th>
+                <td mat-cell *matCellDef="let row">  
+                    {{row.observaciones}}
+                </td>
+            </ng-container>
+
+            <!-- Valor Inicial Column -->
+            <ng-container matColumnDef="valorInicial">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Valor Inicial </th>
+                <td mat-cell *matCellDef="let row">  
+                    {{row.valorInicial}}
+                </td>
+            </ng-container>
+
+            <!-- FEcha Inicio Column -->
+            <ng-container matColumnDef="fechaInicio">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha Inicio </th>
+                <td mat-cell *matCellDef="let row"> {{row.fechaInicio | date:'mediumDate'}} </td>
+            </ng-container>
+
+            <!-- Fecha Fin Column -->
+            <ng-container matColumnDef="fechaCierre">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha Cierre </th>
+                <td mat-cell *matCellDef="let row"> {{row.fechaCierre | date:'mediumDate'}} </td>
+            </ng-container>
+
+            <!-- Estado Column -->
+            <ng-container matColumnDef="estado">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Estado </th>
+                <td mat-cell *matCellDef="let row">
+                    <div class="cell-elements">
+                    <span class="round-span" 
+                        style='margin-right:10px;width:15px;height:15px;background: {{row.estado.color}} !important'>
+                    </span>
+                    <span>{{row.estado.descripcion}}</span>
+                    </div>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="expand">
+                <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+                <td mat-cell *matCellDef="let element">
+                <button mat-icon-button aria-label="expand row" (click)="(expandedElement = expandedElement === element ? null : element); $event.stopPropagation()">
+                    <mat-icon *ngIf="expandedElement !== element">keyboard_arrow_down</mat-icon>
+                    <mat-icon *ngIf="expandedElement === element">keyboard_arrow_up</mat-icon>
+                </button>
+                </td>
+            </ng-container>
+
+            <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+            <ng-container matColumnDef="expandedDetail">
+                <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
+                <mat-card class="example-element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                    <mat-card-content>
+                        <mat-divider>&nbsp;</mat-divider>
+                        <span style="margin-bottom: 0px;"><strong>Datos Adicionales:</strong></span>
+                        <p>
+                            <strong>Ingresos: </strong><span>{{element.ingresos}}</span> --
+                            <strong>Egresos: </strong><span>{{element.egresos}}</span>
+                        </p>
+                        <mat-divider>&nbsp;</mat-divider>
+                    </mat-card-content>
+                    <mat-card-actions align="end">
+                        <button mat-flat-button color="warn" class="m-20" (click)="delete(row.id)">
+                            <mat-icon>delete</mat-icon>
+                            <span>Eliminar</span>
+                        </button>
+                        <button mat-flat-button color="accent" class="m-20" 
+                        [routerLink]="['/admin','caja','form', element.id]">
+                            <mat-icon>edit</mat-icon>
+                            <span>Editar</span>
+                        </button>
+                    </mat-card-actions>
+                </mat-card>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
+            <tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand;"
+                class="example-element-row"
+                [class.example-expanded-row]="expandedElement === element"
+                (click)="expandedElement = expandedElement === element ? null : element">
+            </tr>
+            <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+
+            <!-- Row shown when there is no matching data. -->
+            <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell" colspan="8" style="padding: 20px;">No existen {{encabezado.title}} Registrados. 
+                    <span *ngIf="input.value"> &nbsp;&nbsp; Ningun item coincide con la busqueda de: <strong>{{input.value}}</strong></span>
+                </td>
+            </tr>
+            </table>
+
+            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
+            </div>
+        </div>
+    </div>
+</mat-card>

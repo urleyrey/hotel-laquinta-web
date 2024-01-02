@@ -17,6 +17,12 @@ import { RecepcionFormComponent } from './components/recepcion/recepcion-form/re
 import { ClienteComponent } from './components/cliente/cliente.component';
 import { ClienteFormComponent } from './components/cliente/form/cliente-form.component';
 import { CalendarioComponent } from './calendario/calendario.component';
+import { ProductoComponent } from './components/producto/producto.component';
+import { ProductoFormComponent } from './components/producto/form/producto-form.component';
+import { MovimientoComponent } from './components/movimiento/movimiento.component';
+import { MovimientoFormComponent } from './components/movimiento/form/movimiento-form.component';
+import { CajaComponent } from './components/caja/caja.component';
+import { CajaFormComponent } from './components/caja/form/caja-form.component';
 
 const routes: Routes = [
   {
@@ -86,7 +92,31 @@ const routes: Routes = [
   {
     path: 'calendario',
     component: CalendarioComponent
-  }
+  },
+  {
+    path: 'producto',
+    component: ProductoComponent
+  },
+  {
+    path: 'producto/form/:id',
+    component: ProductoFormComponent
+  },
+  {
+    path: 'movimiento',
+    component: MovimientoComponent
+  },
+  {
+    path: 'movimiento/form/:id',
+    component: MovimientoFormComponent
+  },
+  {
+    path: 'caja',
+    component: CajaComponent
+  },
+  {
+    path: 'caja/form/:id',
+    component: CajaFormComponent
+  },
 ];
 
 @NgModule({
