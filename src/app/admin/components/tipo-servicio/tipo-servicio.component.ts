@@ -12,6 +12,7 @@ import { TipoServicioService } from 'src/app/core/services/api/tipo-servicio.ser
 import { selectTiposervicioList, selectTiposervicioLoading } from 'src/app/state/selectors/tiposervicio.selectors';
 import { changeTiposervicio, loadTiposervicio, loadedTiposervicio } from 'src/app/state/actions/tiposervicio.actions';
 import { selectTipohabitacionCargado } from 'src/app/state/selectors/tipohabitacion.selectors';
+import { GeneralPhpService } from 'src/app/core/services/api/general-php.service';
 
 
 @Component({
@@ -28,43 +29,36 @@ export class TipoServicioComponent implements OnInit {
   }
   displayedColumns: string[] = ['nombre', 'descripcion', 'icono', 'accion'];
   dataSource!: MatTableDataSource<any>;
+  tabla= 'tiposervicio';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   loading$: Observable<boolean> = new Observable();
   cargado$: Observable<boolean> = new Observable();
 
-  constructor(private tipoServicioService: TipoServicioService, 
+  constructor(private generalPhpService: GeneralPhpService, 
               private utilService: UtilService,
               private store: Store<any>) {
   }
 
   ngOnInit(): void{
-    this.loading$ = this.store.select(selectTiposervicioLoading);
-    this.store.dispatch(loadTiposervicio());
-    this.cargado$ = this.store.select(selectTipohabitacionCargado);
-    this.cargado$.subscribe(value => {
-      if(!value){
-        console.log("TIPO SERV CARGADO DE API");
-        this.cargarListadoApi();
-      }else{
-        console.log("TIPO SERV CARGADO DE API");
-        this.cargarListadoStore();
-      }
-    })
+    this.cargarListadoApi();
   }
 
   async cargarListadoApi(){
-    this.listado = await this.tipoServicioService.getAllApi();
-    
-    this.dataSource = new MatTableDataSource(this.listado);
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.listado = (await this.generalPhpService.readAll(this.tabla)).subscribe((val:any) => {
+      console.log("VAL: ", val);
+      this.listado = val.data;
+
+      this.cargarDataSourceTable(this.listado);
+    });  
   }
 
   async cargarListadoStore(){
-    this.listado = await this.tipoServicioService.getAllStore();
-      
+    // this.listado = await this.tipoServicioService.getAllStore();
+  }
+
+  cargarDataSourceTable(listado:any){
     this.dataSource = new MatTableDataSource(this.listado);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -91,7 +85,7 @@ export class TipoServicioComponent implements OnInit {
       cancelButtonText: 'Cancelar!'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.tipoServicioService.delete(id).subscribe((res) => {
+        this.generalPhpService.delete(this.tabla,id).subscribe((res:any) => {
           Swal.fire(
             'Eliminado!',
             'El registro ha sido borrado.',

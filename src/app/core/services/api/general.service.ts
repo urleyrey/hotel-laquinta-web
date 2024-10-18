@@ -22,7 +22,10 @@ export class GeneralService {
   }
 
   post(body:{}, tabla: string){
-    return this.httpClient.post(`${api.url}/${api.stage}/${this.urlOne}?table=${tabla}`, body);
+    console.log("PRUEBA");
+    body = "{\"table\":\"tipohabitacion\",\"validation\":[{\"nombre\":\"required\",\"numeropersonas\":\"required\",\"maximopersonas\":\"required\",\"numerocamas\":\"required\",\"descripcion\":\"required\",\"color\":\"required\"}],\"data\":[{\"nombre\":\"Pruebapostman2\",\"numeropersonas\":\"1\",\"maximopersonas\":\"1\",\"numerocamas\":\"1\",\"descripcion\":\"Descripcionpostman2\",\"color\":\"rgb(0,0,0)\"}]}";
+    // return this.httpClient.post(`${api.url}/${api.stage}/${this.urlOne}?table=${tabla}`, body);
+    return this.httpClient.post(`http://localhost/hotel_api/create.php`, JSON.stringify(body));
   }
 
   delete(id:string, tabla: string){

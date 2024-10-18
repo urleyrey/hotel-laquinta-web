@@ -11,6 +11,7 @@ import { Store } from '@ngrx/store';
 import { changeEstadohabitacion, loadEstadohabitacion, loadedEstadohabitacion } from 'src/app/state/actions/estadohabitacion.actions';
 import { selectEstadohabitacionCargado, selectEstadohabitacionList, selectEstadohabitacionLoading } from 'src/app/state/selectors/estadohabitacion.selectors';
 import { Observable } from 'rxjs';
+import { GeneralPhpService } from 'src/app/core/services/api/general-php.service';
 
 
 @Component({
@@ -32,8 +33,9 @@ export class EstadoHabitacionComponent implements OnInit {
   @ViewChild(MatSort) sort!: MatSort;
   loading$: Observable<boolean> = new Observable();
   cargado$: Observable<boolean> = new Observable();
+  tabla = 'estadohabitacion'
 
-  constructor(private estadoHabitacionService: EstadoHabitacionService, 
+  constructor(private generalPhpService: GeneralPhpService, 
               private utilService: UtilService, 
               private store: Store<any>) {
     //this.cargarListado();
@@ -43,8 +45,6 @@ export class EstadoHabitacionComponent implements OnInit {
 
   async ngOnInit(): Promise<void>{
     await this.cargarListadoApi();
-    this.cargarDataSourceTable(this.listado);
-    
   }
 
   cargarListado(){
@@ -63,7 +63,12 @@ export class EstadoHabitacionComponent implements OnInit {
   }
 
   async cargarListadoApi(){
-    this.listado = await this.estadoHabitacionService.getAllApi();
+    this.listado = (await this.generalPhpService.readAll(this.tabla)).subscribe((val:any) => {
+      console.log("VAL: ", val);
+      this.listado = val.data;
+
+      this.cargarDataSourceTable(this.listado);
+    });  
   }
 
   cargarDataSourceTable(listado:any){
@@ -73,7 +78,7 @@ export class EstadoHabitacionComponent implements OnInit {
   }
 
   async cargarListadoStore(){
-    this.listado = await this.estadoHabitacionService.getAllStore();
+    // this.listado = await this.estadoHabitacionService.getAllStore();
   }
 
   applyFilter(event: Event) {
@@ -97,7 +102,7 @@ export class EstadoHabitacionComponent implements OnInit {
       cancelButtonText: 'Cancelar!'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.estadoHabitacionService.delete(id).subscribe((res) => {
+        this.generalPhpService.delete(this.tabla,id).subscribe((res:any) => {
           Swal.fire(
             'Eliminado!',
             'El registro ha sido borrado.',

@@ -10,16 +10,16 @@ export class AuthGuard implements CanActivate{
 
   constructor(private router: Router, private cognitoService: CognitoService) { }
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree | Observable<boolean> | Promise<boolean>{
-    //return this.cognitoService.getRole().then((role) => {
-      return this.cognitoService.isAuthenticated().then((role) => {
-      if(role){
-        console.log("AUTENTICADO");
-        return true;
-      }else{
-        this.router.navigateByUrl('/auth/login');
-        console.log("NO AUTENTICADO");
-        return false;
-      }
-    })
+    return true;
+    //   return this.cognitoService.isAuthenticated().then((role) => {
+    //   if(role){
+    //     console.log("AUTENTICADO");
+    //     return true;
+    //   }else{
+    //     this.router.navigateByUrl('/auth/login');
+    //     console.log("NO AUTENTICADO");
+    //     return false;
+    //   }
+    // })
   } 
 }

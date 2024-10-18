@@ -188,10 +188,11 @@ export class CalendarioComponent implements OnInit {
       cancelButtonText: 'Cancelar!',
       denyButtonText: 'Si, Crear Recepción!',
     }).then((result) => {
+      console.log("CALENDARIO: ", selectInfo);
       if (result.isConfirmed) {
-        this.router.navigate(['/admin','reserva', 'form', '0', selectInfo.startStr+'to'+selectInfo.endStr]);
+        this.router.navigate(['/admin','reserva', 'form', '0', selectInfo.startStr+'to'+selectInfo.endStr, selectInfo.allDay?'day':'hour']);
       } else if (result.isDenied) {
-        this.router.navigate(['/admin','recepcion', 'form', '0', selectInfo.startStr+'to'+selectInfo.endStr]);
+        this.router.navigate(['/admin','recepcion', 'form', '0', selectInfo.startStr+'to'+selectInfo.endStr, selectInfo.allDay?'day':'hour']);
       }
     });
 

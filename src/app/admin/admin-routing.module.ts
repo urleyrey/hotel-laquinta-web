@@ -70,7 +70,7 @@ const routes: Routes = [
     component: ReservaComponent
   },
   {
-    path: 'reserva/form/:id/:range',
+    path: 'reserva/form/:id/:range/:duration',
     component: ReservaFormComponent
   },
   {
@@ -78,7 +78,7 @@ const routes: Routes = [
     component: RecepcionComponent
   },
   {
-    path: 'recepcion/form/:id/:range',
+    path: 'recepcion/form/:id/:range/:duration',
     component: RecepcionFormComponent
   },
   {

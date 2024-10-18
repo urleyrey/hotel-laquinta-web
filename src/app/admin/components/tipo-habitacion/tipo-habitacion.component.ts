@@ -4,14 +4,12 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { HabitacionService } from 'src/app/core/services/api/habitacion.service';
 import { UtilService } from 'src/app/core/services/util.service';
 import Swal from 'sweetalert2';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { TipoHabitacionService } from 'src/app/core/services/api/tipo-habitacion.service';
-import { selectTipohabitacionCargado, selectTipohabitacionList, selectTipohabitacionLoading } from 'src/app/state/selectors/tipohabitacion.selectors';
 import { changeTipohabitacion, loadTipohabitacion, loadedTipohabitacion } from 'src/app/state/actions/tipohabitacion.actions';
+import { GeneralPhpService } from 'src/app/core/services/api/general-php.service';
 
 
 @Component({
@@ -28,13 +26,14 @@ export class TipoHabitacionComponent implements OnInit{
   }
   displayedColumns: string[] = ['nombre', 'numeroPersonas', 'maximoPersonas', 'numeroCamas', 'descripcion', 'color', 'accion'];
   dataSource!: MatTableDataSource<any>;
+  tabla= 'tipohabitacion';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   loading$: Observable<boolean> = new Observable();
   cargado$: Observable<boolean> = new Observable();
 
-  constructor(private tipoHabitacionService: TipoHabitacionService, 
+  constructor(private generalPhpService: GeneralPhpService, 
               private utilService: UtilService,
               private store: Store<any>) {
   }
@@ -42,35 +41,20 @@ export class TipoHabitacionComponent implements OnInit{
   async ngOnInit(): Promise<void>{
 
     await this.cargarListadoApi();
-    this.cargarDataSourceTable(this.listado);
     
   }
 
-  cargarListado(){
-    this.loading$ = this.store.select(selectTipohabitacionLoading);
-    this.store.dispatch(loadTipohabitacion());
-    this.cargado$ = this.store.select(selectTipohabitacionCargado);
-    this.cargado$.subscribe(value => {
-      if(!value){
-        console.log("TIPO HAB CARGADO DE API");
-        this.cargarListadoApi();
-      }else{
-        console.log("TIPO HAB CARGADO DE API");
-        this.cargarListadoStore();
-      }
-    })
-  }
-
   async cargarListadoApi(){
-    this.listado = await this.tipoHabitacionService.getAllApi();
+    this.listado = (await this.generalPhpService.readAll(this.tabla)).subscribe((val:any) => {
+      console.log("VAL: ", val);
+      this.listado = val.data;
 
-    this.dataSource = new MatTableDataSource(this.listado);
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+      this.cargarDataSourceTable(this.listado);
+    });  
   }
 
   async cargarListadoStore(){
-    this.listado = await this.tipoHabitacionService.getAllStore();
+    // this.listado = await this.tipoHabitacionService.getAllStore();
   }
 
   cargarDataSourceTable(listado:any){
@@ -100,15 +84,12 @@ export class TipoHabitacionComponent implements OnInit{
       cancelButtonText: 'Cancelar!'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.tipoHabitacionService.delete(id).subscribe((res) => {
+        this.generalPhpService.delete(this.tabla,id).subscribe((res:any) => {
           Swal.fire(
             'Eliminado!',
             'El registro ha sido borrado.',
             'success'
           ).then(() =>{
-            this.store.dispatch(changeTipohabitacion(
-              {cargado: false}
-            ));
             this.utilService.reloadCurrentRoute();
           })
         });
