@@ -22,5 +22,12 @@ export const api = {
         cajaOne: 'caja',
         generalAll: 'generales',
         generalOne: 'general'
-    }
+    },
+    url_php: 'https://darkseagreen-oryx-744337.hostingersite.com',
+    // url_php: 'http://localhost/hotel_api',
+    api_php_create: 'create.php',
+    api_php_read: 'read.php',
+    api_php_update: 'update.php',
+    api_php_delete: 'delete.php',
+    api_php_fileUpload: 'file-upload.php',
 }

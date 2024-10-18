@@ -20,20 +20,11 @@ import { TipoProductoData } from '../../data/tipo-producto.data';
 @Component({
   selector: 'app-producto',
   templateUrl: './producto.component.html',
-  styleUrls: ['./producto.component.scss'],
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed', style({height: '0px', minHeight: '0'})),
-      state('expanded', style({height: '*'})),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
-  ],
+  styleUrls: ['./producto.component.scss']
 })
 export class ProductoComponent {
-  columnsToDisplay =  ['valor', 'descripcion', 'tipoProducto'];
-  columnsToDisplayWithExpand = [...this.columnsToDisplay, 'expand'];
-  expandedElement: any;
-
+  displayedColumns =  ['descripcion', 'valor', 'tipoProducto', 'accion'];
+  
   tabla = 'producto';
   loading: boolean = true;
   listado: any = [];
@@ -59,6 +50,7 @@ export class ProductoComponent {
 
   async ngOnInit(): Promise<void> {
     await this.cargarListadoApi();
+    console.log(this.listado);
     await this.mapearListado();
     this.cargarDataSourceTable(this.listado);
   }
@@ -67,7 +59,11 @@ export class ProductoComponent {
   }
 
   async cargarListadoApi() {
-    this.listado = await this.generalService.getAllApi(this.tabla);
+    try{
+      this.listado = await this.generalService.getAllApi(this.tabla);
+    }catch(error){
+      // console.error(error);
+    }
   }
 
   cargarDataSourceTable(listado: any) {

@@ -1,1 +1,134 @@
-<p>caja-form works!</p>
+<div class="row" *ngIf="loading">
+    <div class="col-12">
+        <mat-card >
+        <mat-card-content>
+            <mat-card-title>Procesando...</mat-card-title>
+            <mat-card-subtitle>
+                <span *ngIf="action=='editar'">
+                    La información de {{encabezado.title}} se esta cargando...
+                </span>
+            </mat-card-subtitle>
+            <mat-progress-bar mode="indeterminate" value="40"></mat-progress-bar>
+        </mat-card-content>
+        </mat-card>
+    </div>
+</div>
+
+<form *ngIf="!loading" [formGroup]="myForm" (ngSubmit)="onSubmit(myForm)">
+    <mat-card>
+        <div class="p-20 bg-info position-relative" style="margin-bottom: 20px;">
+            <h4 class="card-title text-white m-0">{{encabezado.title}}</h4>
+            <h6 class="card-subtitle text-white m-0 op-5">{{encabezado.subtitle}}</h6>
+        </div>
+        <mat-card-content>
+            <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
+                <div fxFlex="50%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Valor Inicial: </mat-label>
+                        <input matInput placeholder="Digite Valor Inicial" formControlName="valorInicial">
+                        <mat-icon matSuffix>mode_edit</mat-icon>
+                        <mat-error *ngIf="myForm?.get('valorInicial')?.hasError('required') && (myForm?.get('valorInicial')?.dirty || myForm?.get('valorInicial')?.touched)">
+                            Por favor, digite Valor Inicial.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div fxFlex="50%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Estado: </mat-label>
+                        <mat-select formControlName="estado">
+                            <mat-option *ngFor="let item of listadoEstados"
+                            value="{{item.id}}" 
+                            [ngStyle]="{ padding: '5px' }">
+                             <strong [ngStyle]="{color: item.color}"> {{item.descripcion}}</strong>
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="myForm?.get('estado')?.hasError('required') && (myForm?.get('estado')?.dirty || myForm?.get('estado')?.touched)">
+                            Por favor, seleccione un estado de Caja Diaria.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
+                <div fxFlex="100%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Observaciones: </mat-label>
+                        <input matInput placeholder="Digite Observaciones" formControlName="observaciones">
+                        <mat-icon matSuffix>mode_edit</mat-icon>
+                        <mat-error *ngIf="myForm?.get('observaciones')?.hasError('required') && (myForm?.get('observaciones')?.dirty || myForm?.get('observaciones')?.touched)">
+                            Por favor, digite Observaciones.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
+                <div fxFlex="50%">
+                    <mat-form-field class="p-20">
+                        <input matInput [ngxMatDatetimePicker]="picker" placeholder="Fecha Inicio" formControlName="fechaInicio"
+                          [min]="minDate" [max]="maxDate" [disabled]="disabled">
+                        <ngx-mat-datepicker-toggle matSuffix [for]="picker"></ngx-mat-datepicker-toggle>
+                        <ngx-mat-datetime-picker #picker [showSpinners]="showSpinners" [showSeconds]="showSeconds"
+                          [stepHour]="stepHour" [stepMinute]="stepMinute" [stepSecond]="stepSecond" [touchUi]="touchUi"
+                          [enableMeridian]="enableMeridian" [disableMinute]="disableMinute" [hideTime]="hideTime"
+                          [defaultTime]="defaultTime">
+        
+                          <ngx-mat-datepicker-actions>
+                            <button mat-button color="warn" ngxMatDatepickerCancel>Cancel</button>
+                            <button mat-raised-button color="primary" ngxMatDatepickerApply>Aplicar</button>
+                          </ngx-mat-datepicker-actions>  
+        
+                        </ngx-mat-datetime-picker>
+                    </mat-form-field>
+                </div>
+                <div fxFlex="50%">
+                    <mat-form-field class="p-20">
+                        <input matInput [ngxMatDatetimePicker]="pickerFin" placeholder="Fecha Fin" formControlName="fechaCierre"
+                          [min]="minDate" [max]="maxDate" [disabled]="disabled">
+                        <ngx-mat-datepicker-toggle matSuffix [for]="pickerFin"></ngx-mat-datepicker-toggle>
+                        <ngx-mat-datetime-picker #pickerFin [showSpinners]="showSpinners" [showSeconds]="showSeconds"
+                          [stepHour]="stepHour" [stepMinute]="stepMinute" [stepSecond]="stepSecond" [touchUi]="touchUi"
+                          [enableMeridian]="enableMeridian" [disableMinute]="disableMinute" [hideTime]="hideTime">
+        
+                          <ngx-mat-datepicker-actions>
+                            <button mat-button color="warn" ngxMatDatepickerCancel>Cancel</button>
+                            <button mat-raised-button color="primary" ngxMatDatepickerApply>Aplicar</button>
+                          </ngx-mat-datepicker-actions>  
+        
+                        </ngx-mat-datetime-picker>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
+                <div fxFlex="50%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Ingresos: </mat-label>
+                        <input matInput placeholder="Ingresos del periodo" formControlName="ingresos">
+                        <mat-icon matSuffix>mode_edit</mat-icon>
+                        <mat-error *ngIf="myForm?.get('ingresos')?.hasError('required') && (myForm?.get('ingresos')?.dirty || myForm?.get('ingresos')?.touched)">
+                            Por favor, digite Ingresos del periodo.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div fxFlex="50%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Egresos: </mat-label>
+                        <input matInput placeholder="Egresos del periodo" formControlName="egresos">
+                        <mat-icon matSuffix>mode_edit</mat-icon>
+                        <mat-error *ngIf="myForm?.get('egresos')?.hasError('required') && (myForm?.get('egresos')?.dirty || myForm?.get('egresos')?.touched)">
+                            Por favor, digite Egresos del periodo.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            
+                
+        </mat-card-content>
+        <mat-card-actions align="end">
+            <button mat-raised-button color="warn" class="m-20" (click)="goBack()">Cancelar</button>
+            <button mat-raised-button color="primary" class="m-20" type="submit" [disabled]="myForm.invalid">Guardar</button>
+        </mat-card-actions>
+    </mat-card>
+</form>
+

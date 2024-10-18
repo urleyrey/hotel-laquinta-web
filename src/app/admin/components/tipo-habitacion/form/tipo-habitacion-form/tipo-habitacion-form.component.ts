@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { MatExpansionModule } from '@angular/material/expansion';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { GeneralPhpService } from 'src/app/core/services/api/general-php.service';
 import { TipoHabitacionService } from 'src/app/core/services/api/tipo-habitacion.service';
 import { UtilService } from 'src/app/core/services/util.service';
 import { changeTipohabitacion } from 'src/app/state/actions/tipohabitacion.actions';
@@ -27,9 +28,11 @@ export class TipoHabitacionFormComponent{
     "subtitle": 'Listado de tipos de habitaciones regitrados'
   }
   myForm!: FormGroup;
+  table= "tipohabitacion";
   
   constructor(private router: Router,  route: ActivatedRoute,
-    private tipoHabitacionService: TipoHabitacionService, 
+    private tipoHabitacionService: TipoHabitacionService,
+    private generalPhpSvc: GeneralPhpService,
     private fb: FormBuilder, private utilService: UtilService,
     private store: Store<any>){
       this.myForm = fb.group({
@@ -47,9 +50,8 @@ export class TipoHabitacionFormComponent{
       
       if(this.action == 'editar'){
         this.loading = true;
-        this.tipoHabitacionService.get(this.id).subscribe((res: any) => {
-          this.data = JSON.parse(res.body);
-          console.log(this.data);
+        this.generalPhpSvc.read(this.table, this.id).subscribe((res: any) => {
+          this.data = res.data[0];
           this.myForm.controls['nombre'].setValue(this.data.nombre);
           this.myForm.controls['numeroPersonas'].setValue(this.data.numeroPersonas);
           this.myForm.controls['maximoPersonas'].setValue(this.data.maximoPersonas);
@@ -64,18 +66,50 @@ export class TipoHabitacionFormComponent{
 
   onSubmit(form: any) {
     if(this.action=='editar'){
-      this.putFields(form);  
+      this.putFieldsPhp(form);  
     }
     else{
-      this.tipoHabitacionService.post(form.value).subscribe((res) => {
+      this.generalPhpSvc.create(this.table, form.value).subscribe((res) => {
         this.utilService.openSwalBasic("Atencion","Información Registrada Correctamente", "success").then(() => {
-          this.store.dispatch(changeTipohabitacion(
-            {cargado: false}
-          ));
           this.router.navigate(['/admin','tipo-habitacion']);
         });
       });
     }
+  }
+
+  putFieldsPhp(form: any){
+    if(form.value.nombre != this.data.nombre){
+      this.updateValues['nombre']=form.value.nombre;
+      this.camposEditados+=" NOMBRE,";
+    }
+    if(form.value.numeroPersonas != this.data.numeroPersonas){
+      this.updateValues['numeroPersonas']=form.value.numeroPersonas+"";
+      this.camposEditados+=" NUMERO DE PERSONAS,";
+    }
+    if(form.value.maximoPersonas != this.data.maximoPersonas){
+      this.updateValues['maximoPersonas']=form.value.maximoPersonas;
+      this.camposEditados+=" MAXIMO DE PERSONAS,";
+    }
+    if(form.value.numeroCamas != this.data.numeroCamas){
+      this.updateValues['numeroCamas']=form.value.numeroCamas;
+      this.camposEditados+=" NUMERO DE CAMAS,";
+    }
+    if(form.value.descripcion != this.data.descripcion){
+      this.updateValues['descripcion']=form.value.descripcion;
+      this.camposEditados+=" DESCRIPCION,";
+    }
+    if(form.value.color != this.data.color){
+      this.updateValues['color']=form.value.color;
+      this.camposEditados+=" COLOR,";
+    }
+    
+    console.log(this.updateExpression, this.updateValues);
+    this.generalPhpSvc.update(this.table, this.updateValues, this.id)
+    .subscribe((res) => {
+      this.utilService.openSwalBasic('Atención',`Campos ${this.camposEditados} Editados Correctamente`, "success").then(() => {
+        this.router.navigate(['/admin','tipo-habitacion']);
+      });
+    });
   }
 
   putFields(form: any){
@@ -111,6 +145,7 @@ export class TipoHabitacionFormComponent{
     }
     this.updateExpression="set "+this.updateExpression;
 
+    console.log(this.updateExpression, this.updateValues);
     this.tipoHabitacionService.put(this.id, this.updateExpression.substring(0, this.updateExpression.length - 1), this.updateValues)
     .subscribe((res) => {
       this.utilService.openSwalBasic('Atención',`Campos ${this.camposEditados} Editados Correctamente`, "success").then(() => {

@@ -67,6 +67,7 @@ export class ReservaFormComponent implements OnInit {
   id:string='0';
   to='';
   from='';
+  durationType='day'; //dia completo: day, por horas: hour
   data:any;
   updateExpression:string = '';
   updateValues:any = {};
@@ -117,8 +118,19 @@ export class ReservaFormComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.id=this.route.snapshot.paramMap.get('id')!;
     const range = this.route.snapshot.paramMap.get('range')!;
-    this.to=range.split('to')[1];
-    this.from=range.split('to')[0];
+    const allDay = this.route.snapshot.paramMap.get('duration')!;
+    let toTime = '12:00:00';
+    let fromTime = '12:00:00';
+
+    if(allDay == 'day'){
+      this.to=range.split('to')[1];
+      this.from=range.split('to')[0];
+    }else {
+      this.to=range.split('to')[1].split('T')[0];
+      toTime=range.split('to')[1].split('T')[1].split('-')[0];
+      this.from=range.split('to')[0].split('T')[0];
+      fromTime=range.split('to')[0].split('T')[1].split('-')[0];
+    }
 
       this.id=='0'?this.action='crear':this.action='editar';
       console.log("ID: ",this.id, this.from, this.to);
@@ -141,8 +153,9 @@ export class ReservaFormComponent implements OnInit {
         });
       }else{
         if(range != 'to'){
-          this.myForm.controls['fechaInicio'].setValue(new Date(this.from+' 12:00:00'));
-          this.myForm.controls['fechaFin'].setValue(new Date(this.to+' 12:00:00'));
+          console.log("CALENDARIO: ", this.from, fromTime, this.to, toTime);
+          this.myForm.controls['fechaInicio'].setValue(new Date(this.from+' '+fromTime));
+          this.myForm.controls['fechaFin'].setValue(new Date(this.to+' '+toTime));
         }
       }
       await this.cargarSelects();
@@ -298,7 +311,6 @@ export class ReservaFormComponent implements OnInit {
       x.estadoHabitacion = this.utilService.getObjeto(x.estadoHabitacion, this.listadoEstadoHabitacion);
     }
     this.listadoHabitacion=listadoAux;
-    console.log("HABITACION: ", this.listadoHabitacion);
   }
 
   habitacionChange(habitacion:any){

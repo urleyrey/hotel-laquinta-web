@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { api } from 'src/app/environments/endpoints-api'
 import { Store } from '@ngrx/store';
 import { loadedTipohabitacion, loadedTipohabitacionStore } from 'src/app/state/actions/tipohabitacion.actions';
@@ -15,7 +15,13 @@ export class TipoHabitacionService {
   constructor(private httpClient: HttpClient, private store:Store<any>) { }
 
   async getAll(){
-    return await this.httpClient.get(`${api.url}/${api.stage}/${this.urlAll}`).toPromise();
+    // return await this.httpClient.get(`${api.url}/${api.stage}/${this.urlAll}`).toPromise();
+    console.log("PRUEBA read.php");
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    headers.append('Accept', 'application/json');
+    const read = "{\"table\":\"tipohabitacion\",\"select\":[\"*\"],\"order\":{\"on\":\"id\",\"type\":\"DESC\"}}";
+    return await this.httpClient.post(`http://localhost/hotel_api/read.php`, JSON.parse(JSON.stringify(read)), {headers: headers});
   }
 
   get(id: string){
@@ -23,7 +29,13 @@ export class TipoHabitacionService {
   }
 
   post(body:{}){
-    return this.httpClient.post(`${api.url}/${api.stage}/${this.urlOne}`, body);
+    // return this.httpClient.post(`${api.url}/${api.stage}/${this.urlOne}`, body);
+    console.log("PRUEBA create.php");
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    headers.append('Accept', 'application/json');
+    body = "{\"table\":\"tipohabitacion\",\"validation\":[{\"nombre\":\"required\",\"numeropersonas\":\"required\",\"maximopersonas\":\"required\",\"numerocamas\":\"required\",\"descripcion\":\"required\",\"color\":\"required\"}],\"data\":[{\"nombre\":\"Pruebapostman2\",\"numeropersonas\":\"1\",\"maximopersonas\":\"1\",\"numerocamas\":\"1\",\"descripcion\":\"Descripcionpostman2\",\"color\":\"rgb(0,0,0)\"}]}";
+    return this.httpClient.post(`http://localhost/hotel_api/create.php`, JSON.parse(JSON.stringify(body)), {headers: headers});
   }
 
   delete(id:string){
@@ -50,7 +62,8 @@ export class TipoHabitacionService {
 
   async getAllApi(){
     let res:any = await this.getAll();
-    let listado = JSON.parse(res.body).listado;
+    // let listado = JSON.parse(res.body).listado;
+    let listado = res;
 
     this.store.dispatch(
       loadedTipohabitacion(

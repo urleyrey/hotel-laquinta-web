@@ -1,1 +1,145 @@
-<p>movimiento-form works!</p>
+<div class="row" *ngIf="loading">
+    <div class="col-12">
+        <mat-card >
+        <mat-card-content>
+            <mat-card-title>Procesando...</mat-card-title>
+            <mat-card-subtitle>
+                <span *ngIf="action=='editar'">
+                    La información de {{encabezado.title}} se esta cargando...
+                </span>
+            </mat-card-subtitle>
+            <mat-progress-bar mode="indeterminate" value="40"></mat-progress-bar>
+        </mat-card-content>
+        </mat-card>
+    </div>
+</div>
+
+<form *ngIf="!loading" [formGroup]="myForm" (ngSubmit)="onSubmit(myForm)">
+    <mat-card>
+        <div class="p-20 bg-info position-relative" style="margin-bottom: 20px;">
+            <h4 class="card-title text-white m-0">{{encabezado.title}}</h4>
+            <h6 class="card-subtitle text-white m-0 op-5">{{encabezado.subtitle}}</h6>
+        </div>
+        <mat-card-content>
+            <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
+                <div fxFlex="100%">
+                    <div class="p-20">
+                        <mat-label>Recepcion: </mat-label>
+                        <ng-select formControlName="recepcion">
+                            <ng-option value="0">
+                                <span class="select-title">
+                                    Cliente Externo
+                                </span>
+                            </ng-option>
+                            <ng-option *ngFor="let item of listadoRecepcion"
+                            value="{{item.id}}">
+                                <span class="select-title">
+                                    {{item.cliente.tipoDocumento}}{{item.cliente.numeroDocumento}} 
+                                    {{item.cliente.apellidos}}, {{item.cliente.nombres}}
+                                </span>
+                                <span class="select-subtitle">
+                                    [<strong>{{item.habitacion.nombre}}-{{item.habitacion.descripcion}}</strong>]
+                                </span>
+                                <br>
+                                <span class="select-subtitle">
+                                    Desde: 
+                                    <strong>[{{item.fechaInicio | date:'dd/MM/yyyy hh:mm aaa'}}]</strong>
+                                    a: 
+                                    <strong>[{{item.fechaFin | date:'dd/MM/yyyy hh:mm aaa'}}]</strong>
+                                </span>
+                                <mat-divider></mat-divider>
+                            </ng-option>
+                        </ng-select>
+                    </div>
+                </div>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
+                <div fxFlex="100%">
+                    <div class="p-20">
+                        <mat-label>Producto: </mat-label>
+                        <ng-select formControlName="producto" (change)="productoChange($event)">
+                            <ng-option *ngFor="let item of listadoProducto" 
+                            value="{{item.id}}">
+                                <span class="select-title">{{item.descripcion}}</span>
+                                <span class="select-subtitle">
+                                    [<strong>{{item.tipoProducto.descripcion}}</strong>]
+                                </span>
+                                <mat-divider></mat-divider>
+                            </ng-option>
+                        </ng-select>
+                        <mat-error *ngIf="myForm?.get('habitacion')?.hasError('required') && (myForm?.get('habitacion')?.dirty || myForm?.get('habitacion')?.touched)">
+                            Por favor, seleccione un Producto.
+                        </mat-error>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
+                <div fxFlex="30%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Valor: </mat-label>
+                        <input type="number" matInput placeholder="Digite Valor de la habitacion" formControlName="valor">
+                        <mat-icon matSuffix>mode_edit</mat-icon>
+                        <mat-error *ngIf="myForm?.get('valor')?.hasError('required') && (myForm?.get('valor')?.dirty || myForm?.get('valor')?.touched)">
+                            Por favor, digite un valor.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div fxFlex="40%">
+                    <mat-form-field class="p-20">
+                        <input matInput [ngxMatDatetimePicker]="picker" placeholder="Fecha" formControlName="fecha"
+                          [min]="minDate" [max]="maxDate" [disabled]="disabled">
+                        <ngx-mat-datepicker-toggle matSuffix [for]="picker"></ngx-mat-datepicker-toggle>
+                        <ngx-mat-datetime-picker #picker [showSpinners]="showSpinners" [showSeconds]="showSeconds"
+                          [stepHour]="stepHour" [stepMinute]="stepMinute" [stepSecond]="stepSecond" [touchUi]="touchUi"
+                          [enableMeridian]="enableMeridian" [disableMinute]="disableMinute" [hideTime]="hideTime"
+                          [defaultTime]="defaultTime">
+        
+                          <ngx-mat-datepicker-actions>
+                            <button mat-button color="warn" ngxMatDatepickerCancel>Cancel</button>
+                            <button mat-raised-button color="primary" ngxMatDatepickerApply>Aplicar</button>
+                          </ngx-mat-datepicker-actions>  
+        
+                        </ngx-mat-datetime-picker>
+                    </mat-form-field>
+                </div>
+                <div fxFlex="40%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Tipo Movimiento: </mat-label>
+                        <mat-select formControlName="tipoMovimiento">
+                            <mat-option *ngFor="let item of listadoTipoMovimientos"
+                            value="{{item.id}}" 
+                            [ngStyle]="{ padding: '5px' }">
+                             <strong [ngStyle]="{color: item.color}">{{item.descripcion}}</strong>
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="myForm?.get('tipoMovimiento')?.hasError('required') && (myForm?.get('tipoMovimiento')?.dirty || myForm?.get('tipoMovimiento')?.touched)">
+                            Por favor, seleccione un Tipo de Movimiento.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between" class="p-20">
+                <div fxFlex="100%">
+                    <mat-form-field class="p-20">
+                        <mat-label>Observaciones: </mat-label>
+                        <input matInput placeholder="Digite Observaciones de Movimiento" formControlName="observaciones">
+                        <mat-icon matSuffix>mode_edit</mat-icon>
+                        <mat-error *ngIf="myForm?.get('observaciones')?.hasError('required') && (myForm?.get('observaciones')?.dirty || myForm?.get('observaciones')?.touched)">
+                            Por favor, digite una observacion para el Movimiento.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+        </mat-card-content>
+        <mat-card-actions align="end">
+            <button mat-raised-button color="warn" class="m-20" (click)="goBack()">Cancelar</button>
+            <button mat-raised-button color="primary" class="m-20" type="submit" [disabled]="myForm.invalid">Guardar</button>
+        </mat-card-actions>
+        {{myForm.invalid}} - {{myForm.errors | json}}
+    </mat-card>
+</form>

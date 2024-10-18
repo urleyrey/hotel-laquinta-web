@@ -77,7 +77,7 @@ const MENUCLIENTE = [
 const MENUCAJA = [
   { state: 'producto', name: 'Producto/Servicio', type: 'link', icon: 'ballot' },
   { state: 'movimiento', name: 'Movimientos', type: 'link', icon: 'attach_money' },
-  { state: 'Caja', name: 'Caja Menor', type: 'link', icon: 'local_atm' },
+  { state: 'caja', name: 'Caja Menor', type: 'link', icon: 'local_atm' },
 ];
 
 @Injectable()
